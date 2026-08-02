@@ -1,0 +1,21 @@
+generated: '2026-07-21'
+method: searched
+source: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+versioning:
+  scheme: uri-path
+  current: v3
+  services:
+    campaign: v3
+    accounts: v1
+  docs: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+deprecation:
+  policy_url: null
+  sunset_header: null
+  note: No public deprecation policy or RFC 8594 Sunset/Deprecation header support was located.
+sla:
+  url: null
+status_page: null
+notes: >-
+  The Nexxen DSP API is versioned in the URI path (campaign v3, accounts v1). No dedicated public
+  status page, SLA document, or deprecation policy was found for the DSP API surface as of this
+  pass.

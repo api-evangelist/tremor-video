@@ -1,0 +1,57 @@
+generated: '2026-07-21'
+method: derived
+status: candidate
+source: >-
+  Derived candidate tool list from the Nexxen DSP (Amobee Campaign v3) REST resource surface. No
+  official first-party MCP server was found for Nexxen / Amobee / Tremor Video DSP.
+server:
+  name: nexxen-dsp
+  transport: http
+  base_url: https://services.amobee.com/campaign/v3/api
+  auth: 'oauth2-client-credentials (Authorization: Bearer)'
+tools:
+- name: list_advertisers
+  description: List advertisers
+  source_operation: 'GET /campaign/v3/api/advertisers'
+- name: get_advertiser
+  description: Get an advertiser by id
+  source_operation: 'GET /campaign/v3/api/advertisers/{id}'
+- name: create_advertiser
+  description: Create an advertiser
+  source_operation: 'POST /campaign/v3/api/advertisers/'
+- name: list_insertion_orders
+  description: List insertion orders (filterable by advertiserId)
+  source_operation: 'GET /campaign/v3/api/insertionOrders'
+- name: get_insertion_order
+  description: Get an insertion order by id
+  source_operation: 'GET /campaign/v3/api/insertionOrders/{id}'
+- name: create_insertion_order
+  description: Create an insertion order
+  source_operation: 'POST /campaign/v3/api/insertionOrders/'
+- name: list_line_items
+  description: List line items (filterable by insertionOrderId or packageId)
+  source_operation: 'GET /campaign/v3/api/lineItems'
+- name: get_line_item
+  description: Get a line item by id
+  source_operation: 'GET /campaign/v3/api/lineItems/{id}'
+- name: create_line_item
+  description: Create a line item
+  source_operation: 'POST /campaign/v3/api/lineItems/'
+- name: list_packages
+  description: List packages (filterable by advertiser)
+  source_operation: 'GET /campaign/v3/api/packages'
+- name: get_package
+  description: Get a package by id
+  source_operation: 'GET /campaign/v3/api/packages/{id}'
+- name: create_package
+  description: Create a package
+  source_operation: 'POST /campaign/v3/api/packages/'
+- name: list_creatives
+  description: List creatives (filterable by advertiserId or lineItemId)
+  source_operation: 'GET /campaign/v3/api/creatives'
+- name: get_creative
+  description: Get a creative by id
+  source_operation: 'GET /campaign/v3/api/creatives/{id}'
+- name: create_creative
+  description: Create a creative
+  source_operation: 'POST /campaign/v3/api/creatives/'

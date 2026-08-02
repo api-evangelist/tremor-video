@@ -1,0 +1,37 @@
+generated: '2026-07-21'
+method: searched
+source: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+authentication:
+  style: oauth2-client-credentials-bearer
+  token_url: https://services.amobee.com/accounts/v1/api/token
+  header: 'Authorization: Bearer <access_token>'
+  ref: authentication/tremor-video-authentication.yml
+versioning:
+  scheme: uri-path
+  api_versions:
+    campaign: v3
+    accounts: v1
+  example: https://services.amobee.com/campaign/v3/api
+content_type: application/json
+base_urls:
+  api: https://services.amobee.com/campaign/v3/api
+  token: https://services.amobee.com/accounts/v1/api/token
+response_envelope:
+  fields: [data, response_code, msg_type, msg, request_body]
+  data_field: data
+  success_indicator: 'response_code == 200 and msg_type == "success"'
+pagination:
+  style: query-filter
+  note: >-
+    List endpoints are filtered with resource-id query parameters (e.g. advertiserId,
+    insertionOrderId, packageId, lineItemId) rather than a documented cursor/offset paging scheme.
+idempotency:
+  supported: false
+  note: No idempotency-key header or parameter is documented for the Nexxen DSP API.
+error_handling:
+  envelope: response_code + msg_type + msg on the standard JSON envelope
+  rfc9457: false
+cross_links:
+  authentication: authentication/tremor-video-authentication.yml
+  data_model: data-model/tremor-video-data-model.yml
+  lifecycle: lifecycle/tremor-video-lifecycle.yml

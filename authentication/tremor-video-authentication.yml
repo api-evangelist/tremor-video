@@ -1,0 +1,28 @@
+generated: '2026-07-21'
+method: searched
+source: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+docs: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+summary:
+  types: [oauth2]
+  oauth2_flows: [clientCredentials]
+  token_type: Bearer
+schemes:
+- name: OAuth2ClientCredentials
+  type: oauth2
+  flow: clientCredentials
+  grant_type: client_credentials
+  tokenUrl: https://services.amobee.com/accounts/v1/api/token
+  credentials: [client_id, client_secret]
+  request_body: JSON body {client_id, client_secret, grant_type=client_credentials}
+  token_type: Bearer
+  applied_as: 'Authorization: Bearer <access_token>'
+  sources:
+  - https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+notes: >-
+  The Nexxen DSP (formerly Amobee / Tremor Video DSP) API uses OAuth2 client-credentials. A client
+  POSTs its client_id and client_secret to the token endpoint and receives an access_token, which
+  is then sent as an Authorization: Bearer header on subsequent API calls against
+  https://services.amobee.com/campaign/v3/api. API credentials are generated inside the Nexxen /
+  Amobee DSP platform; the token and call flow are documented in the public Nexxen DSP Postman
+  workspace and corroborated by third-party connectors (Supermetrics) and a community Python
+  client.

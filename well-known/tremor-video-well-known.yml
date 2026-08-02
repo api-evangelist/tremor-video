@@ -1,0 +1,24 @@
+generated: '2026-07-21'
+method: searched
+source: live probes of the Nexxen / Amobee DSP hosts
+hosts:
+- host: https://services.amobee.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+- host: https://nexxen.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /api-catalog
+    status: 404
+notes: >-
+  No /.well-known discovery documents were served by the API host (services.amobee.com) or the
+  marketing host (nexxen.com). This is an honest negative record; no WellKnown scoring pointer is
+  wired because no catalog document was found.

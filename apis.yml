@@ -1,8 +1,26 @@
 aid: tremor-video
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/tremor-video.png
 name: Tremor Video
-description: 'Tremor Video is a company surfaced as a portfolio company of sapphire-ventures and added
-  to the API Evangelist network as a stub for enrichment. Sector: martech. This profile is a lead awaiting
-  the enrichment pipeline.'
+description: >-
+  Tremor Video DSP is the demand-side platform originally built by Tremor Video and Tremor
+  International; following the consolidation of Tremor Video DSP and Amobee it is now marketed as
+  the Nexxen DSP, part of the unified Nexxen advertising stack (DSP, SSP, Ad Server and Data
+  Platform). It offers a REST API for programmatic and connected-TV (CTV) advertising operations,
+  letting partners manage advertisers, insertion orders, line items, packages and creatives. The
+  Nexxen DSP API authenticates with OAuth2 client-credentials (client ID and client secret) and is
+  documented publicly through a Nexxen Postman workspace.
 url: https://raw.githubusercontent.com/api-evangelist/tremor-video/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -12,16 +30,65 @@ x-tier: stub
 x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-21'
+x-enrichment:
+  date: '2026-07-21'
+  status: enriched
+  artifacts_added: 10
+  pass: local-v1
 tags:
 - Company
 - Martech
-apis: []
+- Advertising
+- AdTech
+- DSP
+- Programmatic
+- CTV
+- Video Advertising
+apis:
+- name: Nexxen DSP API
+  description: >-
+    REST API for the Nexxen DSP (formerly Amobee / Tremor Video DSP) to manage programmatic
+    advertising objects — advertisers, insertion orders, line items, packages and creatives.
+    OAuth2 client-credentials authentication; JSON request/response envelope with a data field.
+  humanURL: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+  baseURL: https://services.amobee.com/campaign/v3/api
+  properties:
+  - type: Authentication
+    url: authentication/tremor-video-authentication.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: DomainSecurity
+  url: security/tremor-video-domain-security.yml
 - type: Website
-  url: https://www.tremorvideodsp.com/
+  url: https://nexxen.com/
+- type: Documentation
+  url: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+- type: APIReference
+  url: https://www.postman.com/nexxen-api/nexxen/collection/9md8q3a/nexxen-dsp-apis
+- type: GettingStarted
+  url: https://www.postman.com/nexxen-api/nexxen/collection/9md8q3a/nexxen-dsp-apis
+- type: Postman
+  url: https://www.postman.com/nexxen-api/nexxen/
+- type: Login
+  url: https://login.amobee.com/portal/amobee/dsp/login
+- type: Authentication
+  url: authentication/tremor-video-authentication.yml
+- type: Conventions
+  url: conventions/tremor-video-conventions.yml
+- type: DataModel
+  url: data-model/tremor-video-data-model.yml
+- type: Conformance
+  url: conformance/tremor-video-conformance.yml
+- type: MCPServer
+  url: mcp/tremor-video-mcp.yml
+- type: Packages
+  url: packages/tremor-video-packages.yml
+- type: LLMsTxt
+  url: llms/tremor-video-llms.txt
+- type: Lifecycle
+  url: lifecycle/tremor-video-lifecycle.yml

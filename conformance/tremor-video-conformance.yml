@@ -1,0 +1,22 @@
+generated: '2026-07-21'
+method: derived
+source: >-
+  Derived from the documented Nexxen DSP (Amobee Campaign v3) auth flow and response envelope; no
+  independent compliance/certification program was located for the API surface.
+standards:
+- id: oauth2
+  conforms: true
+  evidence: OAuth2 client-credentials grant with a token endpoint and Bearer access tokens
+- id: oauth2-client-credentials
+  conforms: true
+  evidence: grant_type=client_credentials against services.amobee.com/accounts/v1/api/token
+- id: rest-json
+  conforms: true
+  evidence: JSON request/response over HTTPS with resource-oriented paths under /campaign/v3/api
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: errors returned on a custom {response_code, msg_type, msg} envelope, not application/problem+json
+- id: openidconnect
+  conforms: false
+- id: fapi
+  conforms: false

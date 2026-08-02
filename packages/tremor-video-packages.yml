@@ -1,0 +1,19 @@
+generated: '2026-07-21'
+method: searched
+source: >-
+  Registry and GitHub search for Nexxen / Amobee / Tremor Video DSP client libraries. No official
+  first-party SDK was found on npm, PyPI, Maven Central, NuGet, pkg.go.dev, RubyGems, Packagist or
+  crates.io; the only client library located is a community wrapper.
+packages:
+- language: python
+  registry: github
+  name: amobee-api-client
+  url: https://github.com/martingstall/amobee-api-client
+  install: pip install git+https://github.com/martingstall/amobee-api-client
+  official: false
+  note: >-
+    Community Python wrapper for the Amobee/Nexxen DSP Campaign v3 API (advertisers, insertion
+    orders, line items, packages, creatives). Not published to PyPI and not maintained by Nexxen.
+notes: >-
+  Nexxen documents the DSP API through a public Postman workspace rather than shipping an official
+  client SDK. Only wire a type: SDKs pointer if a first-party library is published later.

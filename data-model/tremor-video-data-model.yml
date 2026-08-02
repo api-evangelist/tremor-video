@@ -1,0 +1,59 @@
+generated: '2026-07-21'
+method: derived
+source: >-
+  Derived from the Nexxen DSP (Amobee Campaign v3) API resource surface and the resource-id filter
+  parameters documented in the public Postman workspace and evidenced by the community Python
+  client (github.com/martingstall/amobee-api-client).
+base_url: https://services.amobee.com/campaign/v3/api
+entities:
+- name: advertiser
+  path: advertisers
+- name: insertionOrder
+  path: insertionOrders
+- name: package
+  path: packages
+- name: lineItem
+  path: lineItems
+- name: creative
+  path: creatives
+relationships:
+- from: insertionOrder
+  to: advertiser
+  kind: belongs_to
+  via: advertiserId
+- from: package
+  to: advertiser
+  kind: belongs_to
+  via: advertiserId
+- from: creative
+  to: advertiser
+  kind: belongs_to
+  via: advertiserId
+- from: lineItem
+  to: insertionOrder
+  kind: belongs_to
+  via: insertionOrderId
+- from: lineItem
+  to: package
+  kind: belongs_to
+  via: packageId
+- from: creative
+  to: lineItem
+  kind: belongs_to
+  via: lineItemId
+- from: advertiser
+  to: insertionOrder
+  kind: has_many
+  via: advertiserId
+- from: advertiser
+  to: package
+  kind: has_many
+  via: advertiserId
+- from: insertionOrder
+  to: lineItem
+  kind: has_many
+  via: insertionOrderId
+- from: lineItem
+  to: creative
+  kind: has_many
+  via: lineItemId
