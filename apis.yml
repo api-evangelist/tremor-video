@@ -1,15 +1,22 @@
 aid: tremor-video
 accessModel:
-  pricing: unknown
-  onboarding: self-serve
+  pricing: enterprise
+  onboarding: contract
   trial: false
   try_now: false
   public: false
-  label: Self-serve signup
-  confidence: medium
+  label: Credentials provisioned inside a DSP contract
+  confidence: high
   source:
   - authentication
-  generated: '2026-07-22'
+  - plans
+  - collections
+  note: >-
+    Corrected 2026-08-13. The earlier "self-serve signup" reading was wrong: Nexxen publishes no
+    pricing page (nexxen.com/pricing 404), no developer signup, and the collection states client_id
+    is the ID of an API service account created inside the Nexxen / Amobee DSP platform. The only
+    public entry point is the contact form.
+  generated: '2026-08-13'
   method: derived
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/tremor-video.png
 name: Tremor Video
@@ -18,9 +25,12 @@ description: >-
   International; following the consolidation of Tremor Video DSP and Amobee it is now marketed as
   the Nexxen DSP, part of the unified Nexxen advertising stack (DSP, SSP, Ad Server and Data
   Platform). It offers a REST API for programmatic and connected-TV (CTV) advertising operations,
-  letting partners manage advertisers, insertion orders, line items, packages and creatives. The
-  Nexxen DSP API authenticates with OAuth2 client-credentials (client ID and client secret) and is
-  documented publicly through a Nexxen Postman workspace.
+  letting partners manage advertisers, insertion orders, packages, line items, ads, creatives,
+  audience segments, inventory and publisher deals, plus read-only device and geographic reference
+  services and an asynchronous reporting service. The four services sit behind one gateway at
+  services.amobee.com and share a single OAuth2 client-credentials bearer token. Nexxen publishes
+  no OpenAPI; the machine-readable contract is a public Postman collection of 94 requests with 75
+  saved response examples, and API credentials are provisioned inside an existing DSP contract.
 url: https://raw.githubusercontent.com/api-evangelist/tremor-video/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -30,11 +40,11 @@ x-tier: stub
 x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-21'
+modified: '2026-08-13'
 x-enrichment:
-  date: '2026-07-21'
+  date: '2026-08-13'
   status: enriched
-  artifacts_added: 10
+  artifacts_added: 13
   pass: local-v1
 tags:
 - Company
@@ -48,14 +58,79 @@ tags:
 apis:
 - name: Nexxen DSP API
   description: >-
-    REST API for the Nexxen DSP (formerly Amobee / Tremor Video DSP) to manage programmatic
-    advertising objects — advertisers, insertion orders, line items, packages and creatives.
-    OAuth2 client-credentials authentication; JSON request/response envelope with a data field.
+    REST API for the Nexxen DSP (formerly Amobee / Tremor Video DSP) Campaign Management service —
+    advertisers, insertion orders, packages, line items, ads, creatives, audience segments,
+    retargeting segments, beacons, inventory lists, publisher deals and location groups. OAuth2
+    client-credentials authentication; a shared JSON envelope of queryTotal / data / errors /
+    links; offset-limit pagination; marketId scoping with a 300 Multiple Choices disambiguation
+    response. Published as a public Postman collection rather than an OpenAPI.
   humanURL: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
-  baseURL: https://services.amobee.com/campaign/v3/api
+  baseURL: https://services.amobee.com/campaign/v5/api
   properties:
   - type: Authentication
     url: authentication/tremor-video-authentication.yml
+  - type: PostmanCollection
+    url: collections/tremor-video.postman_collection.json
+  - type: Examples
+    url: examples/tremor-video-examples.yml
+  - type: ErrorCatalog
+    url: errors/tremor-video-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/tremor-video-rate-limits.yml
+- name: Nexxen DSP Token Service
+  description: >-
+    OAuth2 client-credentials token service for the Nexxen DSP APIs. A client POSTs its client_id
+    and client_secret with grant_type=client_credentials as a JSON body and receives an
+    access_token used as a Bearer token on every other Nexxen DSP service. It is the only service
+    in the suite that does not itself require an access token.
+  humanURL: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+  baseURL: https://services.amobee.com/accounts/v1/api
+  properties:
+  - type: Authentication
+    url: authentication/tremor-video-authentication.yml
+  - type: PostmanCollection
+    url: collections/tremor-video.postman_collection.json
+- name: Nexxen DSP Reporting API
+  description: >-
+    Asynchronous reporting service for the Nexxen DSP. A report is submitted as a query
+    (aggregationType, startTime/endTime, filters by objectType, optional S3 outputPath), answered
+    with 202 Accepted and a report id on the Location header, then polled for the result. Scoped to
+    limited quick pulls: 19 months lookback, 300MB maximum output, 24-hour result retention, and a
+    published limit of 10,000 calls per day at 8 per second.
+  humanURL: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+  baseURL: https://services.amobee.com/reporting/v2/api
+  properties:
+  - type: Authentication
+    url: authentication/tremor-video-authentication.yml
+  - type: RateLimits
+    url: rate-limits/tremor-video-rate-limits.yml
+  - type: PostmanCollection
+    url: collections/tremor-video.postman_collection.json
+- name: Nexxen DSP Device API
+  description: >-
+    Read-only reference service for the device taxonomy used in Nexxen DSP line-item targeting —
+    device types, operating systems, manufacturers and individual devices, each listable and
+    retrievable by id and filterable by its parent in the hierarchy.
+  humanURL: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+  baseURL: https://services.amobee.com/device/v1/api
+  properties:
+  - type: Authentication
+    url: authentication/tremor-video-authentication.yml
+  - type: PostmanCollection
+    url: collections/tremor-video.postman_collection.json
+- name: Nexxen DSP Location API
+  description: >-
+    Read-only geographic reference service for Nexxen DSP geo targeting — continents, countries,
+    regions, cities, DMAs, named places and street addresses, each listable and retrievable by id,
+    with regions filtered by country, cities and DMAs filtered by region, and free-text search on
+    places and addresses.
+  humanURL: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+  baseURL: https://services.amobee.com/location/v1/api
+  properties:
+  - type: Authentication
+    url: authentication/tremor-video-authentication.yml
+  - type: PostmanCollection
+    url: collections/tremor-video.postman_collection.json
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -92,3 +167,30 @@ common:
   url: llms/tremor-video-llms.txt
 - type: Lifecycle
   url: lifecycle/tremor-video-lifecycle.yml
+- type: PostmanCollection
+  url: collections/tremor-video.postman_collection.json
+- type: Examples
+  url: examples/tremor-video-examples.yml
+- type: ErrorCatalog
+  url: errors/tremor-video-problem-types.yml
+- type: RateLimits
+  url: rate-limits/tremor-video-rate-limits.yml
+- type: Plans
+  url: plans/tremor-video-plans-pricing.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: LLMsTxt
+  name: Provider-published llms.txt (verbatim)
+  url: llms/tremor-video-nexxen-llms.txt
+- type: TermsOfService
+  url: https://nexxen.com/master-service-terms/
+- type: PrivacyPolicy
+  url: https://nexxen.com/services-privacy-policy/
+- type: Blog
+  url: https://nexxen.com/blog/
+- type: Support
+  url: https://nexxen.com/contact-us/
+- type: WellKnown
+  url: well-known/tremor-video-well-known.yml
+- type: OAuthScopes
+  url: scopes/tremor-video-scopes.yml
