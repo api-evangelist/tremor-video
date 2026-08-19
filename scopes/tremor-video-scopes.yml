@@ -1,0 +1,77 @@
+generated: '2026-08-13'
+method: probed
+source: https://amobee-platform.okta.com/oauth2/default/.well-known/openid-configuration
+docs: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+note: >-
+  Nexxen publishes no scope reference page and no OpenAPI, so nothing here was read from a scopes
+  document. Everything below was read out of two real sources: the OIDC metadata served by the
+  Okta authorization server that issues Nexxen DSP API tokens, and the decoded (expired, 2022)
+  example access token the provider itself published inside its public Postman collection. The
+  DSP API does not ask callers for scopes — a client-credentials call to
+  services.amobee.com/accounts/v1/api/token returns a token whose per-service entitlements are
+  already baked into the service account.
+schemes:
+- name: OAuth2ClientCredentials
+  source: collections/tremor-video.postman_collection.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://services.amobee.com/accounts/v1/api/token
+    scopes: []
+    note: The provider's own wrapper endpoint; takes client_id + client_secret in a JSON body.
+authorization_server:
+  issuer: https://amobee-platform.okta.com/oauth2/default
+  vendor: Okta
+  token_endpoint: https://amobee-platform.okta.com/oauth2/default/v1/token
+  authorization_endpoint: https://amobee-platform.okta.com/oauth2/default/v1/authorize
+  introspection_endpoint: https://amobee-platform.okta.com/oauth2/default/v1/introspect
+  revocation_endpoint: https://amobee-platform.okta.com/oauth2/default/v1/revoke
+  jwks_uri: https://amobee-platform.okta.com/oauth2/default/v1/keys
+  grant_types_supported: [authorization_code, implicit, refresh_token, password, 'urn:ietf:params:oauth:grant-type:device_code']
+  client_credentials_advertised: false
+  pkce: [S256]
+  discovery_documents:
+  - well-known/tremor-video-openid-configuration.json
+  - well-known/tremor-video-oauth-authorization-server.json
+scopes:
+- scope: openid
+  description: OIDC subject identity; the only scope present on a live-issued DSP API token.
+  flows: [clientCredentials]
+  sources: [collections/tremor-video.postman_collection.json]
+  evidence: 'scp: ["openid"] on the provider-published example access token'
+oidc_scopes_supported:
+- {scope: openid, source: openid-configuration}
+- {scope: profile, source: openid-configuration}
+- {scope: email, source: openid-configuration}
+- {scope: address, source: openid-configuration}
+- {scope: phone, source: openid-configuration}
+- {scope: offline_access, source: openid-configuration}
+- {scope: device_sso, source: openid-configuration}
+note_on_oidc_scopes: >-
+  These are the Okta authorization server's advertised OIDC scopes, i.e. what the identity tenant
+  supports for user sign-in. They are NOT an API permission vocabulary for the DSP API and must not
+  be read as one.
+authorities:
+  model: >-
+    Entitlement is carried as an authorities[] claim on the issued token — a coarse per-service
+    grant, not a request-time scope. A caller cannot narrow or elevate it; it is set on the API
+    service account when the credential is provisioned in the DSP platform.
+  source: decoded example access token published in the provider's own Postman collection
+  observed:
+  - {authority: APP_API_CAMPAIGN_MGMT, grants: Campaign Management service (/campaign/v5/api)}
+  - {authority: APP_API_REPORTING, grants: Reporting service (/reporting/v2/api)}
+  - {authority: APP_API_DEVICE, grants: Device reference service (/device/v1/api)}
+  - {authority: APP_API_LOCATION, grants: Location reference service (/location/v1/api)}
+  - {authority: APP_API_DATAMINE, grants: data-mining surface not present in the public collection}
+  - {authority: POLICY_API, grants: policy surface not present in the public collection}
+  - {authority: APP_TURN_PLATFORM, grants: legacy Turn platform (Amobee acquired Turn)}
+  - {authority: ROLE_SERVICE_ACCOUNT, grants: marks the principal as a machine account}
+  - {authority: ROLE_INTERNAL, grants: internal role present on the published example token}
+  - {authority: Everyone, grants: default Okta group}
+  caveat: >-
+    This is one example token from one service account, published by the provider in 2022 and now
+    expired. It shows the shape and the naming of the entitlement vocabulary; it is not a complete
+    or current catalog, and two of the authorities (APP_API_DATAMINE, POLICY_API) point at services
+    that have no public documentation at all.
+privacy_note: >-
+  The subject, email and personal-name claims carried by that example token were deliberately not
+  transcribed here, and the token itself has been redacted out of the saved collection.

@@ -1,0 +1,560 @@
+generated: '2026-08-13'
+method: derived
+source: collections/tremor-video.postman_collection.json
+docs: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+note: >-
+  Index of the saved request/response examples Nexxen publishes inside its own public Postman
+  collection for the Nexxen DSP (formerly Amobee / Tremor Video DSP) APIs. Every example below is
+  the provider's own recorded response body, stored verbatim in the collection file — nothing here
+  was authored or synthesised by API Evangelist. There is no OpenAPI to carry these as in-spec
+  examples, so the collection is the only machine-readable place they exist.
+example_count: 75
+request_count: 75
+by_status:
+  '200': 50
+  '201': 19
+  '202': 1
+  '204': 2
+  '300': 1
+  '404': 2
+by_service:
+  "Campaign Management": 70
+  "Reporting": 4
+  "Token Service": 1
+redactions:
+- file: collections/tremor-video.postman_collection.json
+  what: one expired (2022) Okta JWT access token saved in the Token Service response example
+  replaced_with: REDACTED_EXAMPLE_JWT_ACCESS_TOKEN
+  why: >-
+    The provider published a real, now-expired service-account access token in its public
+    collection. Its payload carried an employee's given and family name plus a subject email, so it
+    was redacted before storage under the enrichment PII guardrail and to keep the repo clear of
+    credential-shaped strings. Its non-personal claims (issuer, scp, authorities) are recorded in
+    scopes/tremor-video-scopes.yml.
+  date: '2026-08-13'
+examples:
+- request: "New Bearer Token"
+  folder: "Token Service"
+  method: "POST"
+  url: "{{url}}/accounts/v1/api/token"
+  example: "Generate Token - Success"
+  status: 200
+  bytes: 1336
+- request: "List of Account Managers"
+  folder: "Campaign Management/Account Managers"
+  method: "GET"
+  url: "{{campaign_url}}/accountManagers?marketId=1"
+  example: "200 Success"
+  status: 200
+  bytes: 321
+- request: "List of Account Managers"
+  folder: "Campaign Management/Account Managers"
+  method: "GET"
+  url: "{{campaign_url}}/accountManagers?marketId=1"
+  example: "300 Multiple Choices"
+  status: 300
+  bytes: 270
+- request: "Existing Account Manager"
+  folder: "Campaign Management/Account Managers"
+  method: "GET"
+  url: "{{campaign_url}}/accountManagers/:id"
+  example: "200 Success"
+  status: 200
+  bytes: 169
+- request: "New Advertiser"
+  folder: "Campaign Management/Advertisers"
+  method: "POST"
+  url: "{{campaign_url}}/accounts/:accountId/advertisers"
+  example: "201 Created"
+  status: 201
+  bytes: 1069
+- request: "List of Advertisers"
+  folder: "Campaign Management/Advertisers"
+  method: "GET"
+  url: "{{campaign_url}}/advertisers?marketId=1&offset=0&limit=2&sortOrder=asc&sortKey=name"
+  example: "200 Success"
+  status: 200
+  bytes: 1680
+- request: "Existing Advertiser"
+  folder: "Campaign Management/Advertisers"
+  method: "GET"
+  url: "{{campaign_url}}/advertisers/:advertiserId"
+  example: "200 Success"
+  status: 200
+  bytes: 1069
+- request: "New IO"
+  folder: "Campaign Management/Insertion Orders (IOs)"
+  method: "POST"
+  url: "{{campaign_url}}/advertisers/:advertiserId/insertionOrders"
+  example: "201 Created"
+  status: 201
+  bytes: 1454
+- request: "Copy Existing IO"
+  folder: "Campaign Management/Insertion Orders (IOs)"
+  method: "POST"
+  url: "{{campaign_url}}/insertionOrders/:id?copy=self"
+  example: "200 Success"
+  status: 200
+  bytes: 138
+- request: "List of IOs"
+  folder: "Campaign Management/Insertion Orders (IOs)"
+  method: "GET"
+  url: "{{campaign_url}}/insertionOrders?advertiserId={{advertiserId}}&offset=0&limit=2&sortOrder=asc&sortKey=id"
+  example: "200 Success"
+  status: 200
+  bytes: 2765
+- request: "Existing IO"
+  folder: "Campaign Management/Insertion Orders (IOs)"
+  method: "GET"
+  url: "{{campaign_url}}/insertionOrders/:insertionOrderId"
+  example: "200 Success"
+  status: 200
+  bytes: 1454
+- request: "New Package"
+  folder: "Campaign Management/Packages"
+  method: "POST"
+  url: "{{campaign_url}}/insertionOrders/:insertionOrderId/packages"
+  example: "201 Created"
+  status: 201
+  bytes: 1307
+- request: "Copy Existing Package"
+  folder: "Campaign Management/Packages"
+  method: "POST"
+  url: "{{campaign_url}}/packages/:id?copy=self"
+  example: "200 Success"
+  status: 200
+  bytes: 131
+- request: "List of Packages"
+  folder: "Campaign Management/Packages"
+  method: "GET"
+  url: "{{campaign_url}}/packages?insertionOrderId={{insertionOrderId}}&offset=0&limit=2&sortOrder=asc&sortKey=id"
+  example: "200 Success"
+  status: 200
+  bytes: 2298
+- request: "Existing Package"
+  folder: "Campaign Management/Packages"
+  method: "GET"
+  url: "{{campaign_url}}/packages/:id"
+  example: "200 Success"
+  status: 200
+  bytes: 1307
+- request: "New LI (2 Level Campaign)"
+  folder: "Campaign Management/Line Items (LIs)"
+  method: "POST"
+  url: "{{campaign_url}}/insertionOrders/:insertionOrderId/lineItems"
+  example: "Flat Bidding LI"
+  status: 201
+  bytes: 9718
+- request: "New LI (2 Level Campaign)"
+  folder: "Campaign Management/Line Items (LIs)"
+  method: "POST"
+  url: "{{campaign_url}}/insertionOrders/:insertionOrderId/lineItems"
+  example: "Automated Bidding LI"
+  status: 201
+  bytes: 10228
+- request: "New LI (3 Level Campaign)"
+  folder: "Campaign Management/Line Items (LIs)"
+  method: "POST"
+  url: "{{campaign_url}}/packages/:packageId/lineItems"
+  example: "Flat Bidding LI"
+  status: 201
+  bytes: 9757
+- request: "New LI (3 Level Campaign)"
+  folder: "Campaign Management/Line Items (LIs)"
+  method: "POST"
+  url: "{{campaign_url}}/packages/:packageId/lineItems"
+  example: "Automated Bidding LI"
+  status: 201
+  bytes: 10267
+- request: "Copy Existing LI"
+  folder: "Campaign Management/Line Items (LIs)"
+  method: "POST"
+  url: "{{campaign_url}}/lineItems/:id?copy=self"
+  example: "200 Success"
+  status: 200
+  bytes: 132
+- request: "List of LIs"
+  folder: "Campaign Management/Line Items (LIs)"
+  method: "GET"
+  url: "{{campaign_url}}/lineItems?packageId={{packageId}}&offset=0&limit=2&sortOrder=asc&sortKey=id"
+  example: "200 Success"
+  status: 200
+  bytes: 19444
+- request: "New Retargeting Segment"
+  folder: "Campaign Management/Retargeting Segments"
+  method: "POST"
+  url: "{{campaign_url}}/advertisers/:advertiserId/retargetingSegments"
+  example: "Include A"
+  status: 201
+  bytes: 852
+- request: "New Retargeting Segment"
+  folder: "Campaign Management/Retargeting Segments"
+  method: "POST"
+  url: "{{campaign_url}}/advertisers/:advertiserId/retargetingSegments"
+  example: "Exclude (A or B)"
+  status: 201
+  bytes: 1665
+- request: "New Retargeting Segment"
+  folder: "Campaign Management/Retargeting Segments"
+  method: "POST"
+  url: "{{campaign_url}}/advertisers/:advertiserId/retargetingSegments"
+  example: "Include A & B & (C or D)"
+  status: 201
+  bytes: 2149
+- request: "New Retargeting Segment"
+  folder: "Campaign Management/Retargeting Segments"
+  method: "POST"
+  url: "{{campaign_url}}/advertisers/:advertiserId/retargetingSegments"
+  example: "Include (A or B) & (C or D)"
+  status: 201
+  bytes: 3291
+- request: "Existing Retargeting Segment"
+  folder: "Campaign Management/Retargeting Segments"
+  method: "GET"
+  url: "{{campaign_url}}/retargetingSegments/:segmentRetargetingId"
+  example: "200 Success"
+  status: 200
+  bytes: 2951
+- request: "List of Concepts"
+  folder: "Campaign Management/Concepts/Concept Sets"
+  method: "GET"
+  url: "{{campaign_url}}/concepts?marketId=1&advertiserId&conceptUsage=brandSafety&conceptUsageSubtype=interests&offset=0&limit=2&sortOrder=desc&sortKey=id"
+  example: "200 Success"
+  status: 200
+  bytes: 1605
+- request: "List of Concept Sets"
+  folder: "Campaign Management/Concepts/Concept Sets"
+  method: "GET"
+  url: "{{campaign_url}}/conceptSets?marketId=1&advertiserId=&conceptUsage=contextual&isReusable=true&offset=0&limit=2&sortOrder=asc&sortKey=name"
+  example: "200 Success"
+  status: 200
+  bytes: 1336
+- request: "New Beacon"
+  folder: "Campaign Management/Beacons"
+  method: "POST"
+  url: "{{campaign_url}}/advertisers/:advertiserId/beacons"
+  example: "201 Created"
+  status: 201
+  bytes: 2118
+- request: "List of Beacons"
+  folder: "Campaign Management/Beacons"
+  method: "GET"
+  url: "{{campaign_url}}/beacons?advertiserId={{advertiserId}}&offset=0&limit=2&sortOrder=asc&sortKey=beaconPlacement"
+  example: "200 Success"
+  status: 200
+  bytes: 4492
+- request: "Existing Beacon"
+  folder: "Campaign Management/Beacons"
+  method: "GET"
+  url: "{{campaign_url}}/beacons/:id"
+  example: "200 Success"
+  status: 200
+  bytes: 2118
+- request: "New Inventory List"
+  folder: "Campaign Management/Inventory Lists"
+  method: "POST"
+  url: "{{campaign_url}}/inventoryLists?marketId=1"
+  example: "Site List"
+  status: 201
+  bytes: 506
+- request: "New Inventory List"
+  folder: "Campaign Management/Inventory Lists"
+  method: "POST"
+  url: "{{campaign_url}}/inventoryLists?marketId=1"
+  example: "App List"
+  status: 201
+  bytes: 580
+- request: "Existing Inventory List"
+  folder: "Campaign Management/Inventory Lists"
+  method: "GET"
+  url: "{{campaign_url}}/inventoryLists/:id"
+  example: "200 Success"
+  status: 200
+  bytes: 517
+- request: "New Location Group"
+  folder: "Campaign Management/Location Groups"
+  method: "POST"
+  url: "{{campaign_url}}/locationGroups?marketId=1"
+  example: "Mobile - LatLong Coordinates"
+  status: 201
+  bytes: 562
+- request: "New Location Group"
+  folder: "Campaign Management/Location Groups"
+  method: "POST"
+  url: "{{campaign_url}}/locationGroups?marketId=1"
+  example: "2 Standard Postal Codes"
+  status: 201
+  bytes: 507
+- request: "Existing Location Group"
+  folder: "Campaign Management/Location Groups"
+  method: "GET"
+  url: "{{campaign_url}}/locationGroups/:id"
+  example: "200 Success"
+  status: 200
+  bytes: 507
+- request: "New Publisher Deal"
+  folder: "Campaign Management/Publisher Deals"
+  method: "POST"
+  url: "{{campaign_url}}/publisherDeals?marketId=1"
+  example: "201 Created"
+  status: 201
+  bytes: 879
+- request: "Existing Deal"
+  folder: "Campaign Management/Publisher Deals"
+  method: "GET"
+  url: "{{campaign_url}}/publisherDeals/:id"
+  example: "(X) 200 Success"
+  status: 200
+  bytes: 883
+- request: "Upload Display Asset"
+  folder: "Campaign Management/Creatives"
+  method: "POST"
+  url: "{{campaign_url}}/creativeAssets/display?marketId=1"
+  example: "200 Success"
+  status: 200
+  bytes: 214
+- request: "Upload Video Asset"
+  folder: "Campaign Management/Creatives"
+  method: "POST"
+  url: "{{campaign_url}}/creativeAssets/video?marketId=1"
+  example: "200 Success"
+  status: 200
+  bytes: 215
+- request: "Upload Audio Asset"
+  folder: "Campaign Management/Creatives"
+  method: "POST"
+  url: "{{campaign_url}}/creativeAssets/audio?marketId=1"
+  example: "200 Success"
+  status: 200
+  bytes: 215
+- request: "Existing Creative"
+  folder: "Campaign Management/Creatives"
+  method: "GET"
+  url: "{{campaign_url}}/creatives/:id"
+  example: "200 Success"
+  status: 200
+  bytes: 3040
+- request: "New Ad"
+  folder: "Campaign Management/Ads"
+  method: "POST"
+  url: "{{campaign_url}}/lineItems/:lineItemId/ads"
+  example: "Weighted Rotation - 2 Assigned Creatives"
+  status: 201
+  bytes: 922
+- request: "New Ad"
+  folder: "Campaign Management/Ads"
+  method: "POST"
+  url: "{{campaign_url}}/lineItems/:lineItemId/ads"
+  example: "Single Creative Assignment"
+  status: 201
+  bytes: 768
+- request: "Existing Ad"
+  folder: "Campaign Management/Ads"
+  method: "GET"
+  url: "{{campaign_url}}/ads/:id"
+  example: "200 Success"
+  status: 200
+  bytes: 922
+- request: "Edit Ad"
+  folder: "Campaign Management/Ads"
+  method: "PUT"
+  url: "{{campaign_url}}/ads/:id"
+  example: "Add Creative, Change Weighting"
+  status: 204
+  bytes: 0
+- request: "Edit Ad"
+  folder: "Campaign Management/Ads"
+  method: "PUT"
+  url: "{{campaign_url}}/ads/:id"
+  example: "Change Rotation Method"
+  status: 204
+  bytes: 0
+- request: "List of Ad Sizes"
+  folder: "Campaign Management/Ad Sizes"
+  method: "GET"
+  url: "{{campaign_url}}/adSizes?mediaChannel=audio"
+  example: "200 Success"
+  status: 200
+  bytes: 774
+- request: "List of Device Types"
+  folder: "Campaign Management/Device/Device Types"
+  method: "GET"
+  url: "{{device_url}}/deviceTypes"
+  example: "200 Success"
+  status: 200
+  bytes: 1282
+- request: "Existing Device Type"
+  folder: "Campaign Management/Device/Device Types"
+  method: "GET"
+  url: "{{device_url}}/deviceTypes/:id"
+  example: "200 Success"
+  status: 200
+  bytes: 163
+- request: "List of OS's"
+  folder: "Campaign Management/Device/Operating Systems"
+  method: "GET"
+  url: "{{device_url}}/operatingSystems"
+  example: "200 Success"
+  status: 200
+  bytes: 3716
+- request: "Existing OS"
+  folder: "Campaign Management/Device/Operating Systems"
+  method: "GET"
+  url: "{{device_url}}/operatingSystems/:id"
+  example: "200 Success"
+  status: 200
+  bytes: 946
+- request: "List of Manufacturers"
+  folder: "Campaign Management/Device/Manufacturers"
+  method: "GET"
+  url: "{{device_url}}/manufacturers?deviceTypeId=4602978&operatingSystemId=4610163&offset=0&sortOrder=asc"
+  example: "200 Success"
+  status: 200
+  bytes: 347
+- request: "Existing Manufacturer"
+  folder: "Campaign Management/Device/Manufacturers"
+  method: "GET"
+  url: "{{device_url}}/manufacturers/:id"
+  example: "200 Success"
+  status: 200
+  bytes: 162
+- request: "List of Devices"
+  folder: "Campaign Management/Device/Devices"
+  method: "GET"
+  url: "{{device_url}}/devices?deviceTypeId=4602978&operatingSystemId=4610163&manufacturerId=4610164&offset=0&limit=10&sortOrder=asc"
+  example: "200 Success"
+  status: 200
+  bytes: 2902
+- request: "Existing Device"
+  folder: "Campaign Management/Device/Devices"
+  method: "GET"
+  url: "{{device_url}}/devices/:id"
+  example: "200 Success"
+  status: 200
+  bytes: 280
+- request: "List of Addresses"
+  folder: "Campaign Management/Location/Addresses"
+  method: "GET"
+  url: "{{location_url}}/addresses?searchString=Redwood Shores Parkway"
+  example: "Redwood Shores Parkway Addresses"
+  status: 200
+  bytes: 3333
+- request: "Existing Address"
+  folder: "Campaign Management/Location/Addresses"
+  method: "GET"
+  url: "{{location_url}}/addresses/:id"
+  example: "200 Success"
+  status: 200
+  bytes: 195
+- request: "List of Continents"
+  folder: "Campaign Management/Location/Continents"
+  method: "GET"
+  url: "{{location_url}}/continents"
+  example: "200 Success"
+  status: 200
+  bytes: 876
+- request: "Existing Continent"
+  folder: "Campaign Management/Location/Continents"
+  method: "GET"
+  url: "{{location_url}}/continents/:id"
+  example: "North America"
+  status: 200
+  bytes: 161
+- request: "List of Countries"
+  folder: "Campaign Management/Location/Countries"
+  method: "GET"
+  url: "{{location_url}}/countries"
+  example: "200 Success"
+  status: 200
+  bytes: 37538
+- request: "Existing Country"
+  folder: "Campaign Management/Location/Countries"
+  method: "GET"
+  url: "{{location_url}}/countries/:id"
+  example: "Canada"
+  status: 200
+  bytes: 184
+- request: "List of Regions"
+  folder: "Campaign Management/Location/Regions"
+  method: "GET"
+  url: "{{location_url}}/regions?countryId=1&offset=0&sortOrder=asc"
+  example: "Provinces of Canada"
+  status: 200
+  bytes: 2101
+- request: "Existing Region"
+  folder: "Campaign Management/Location/Regions"
+  method: "GET"
+  url: "{{location_url}}/regions/:id"
+  example: "British Columbia"
+  status: 200
+  bytes: 191
+- request: "List of Cities"
+  folder: "Campaign Management/Location/Cities"
+  method: "GET"
+  url: "{{location_url}}/cities?regionId=2&offset=0&sortOrder=desc"
+  example: "Cities in British Columbia"
+  status: 200
+  bytes: 14611
+- request: "Existing City"
+  folder: "Campaign Management/Location/Cities"
+  method: "GET"
+  url: "{{location_url}}/cities/:id"
+  example: "Vancouver"
+  status: 200
+  bytes: 183
+- request: "List of DMAs"
+  folder: "Campaign Management/Location/DMAs"
+  method: "GET"
+  url: "{{location_url}}/dmas?regionId=22"
+  example: "DMAs in California"
+  status: 200
+  bytes: 1720
+- request: "Existing DMA"
+  folder: "Campaign Management/Location/DMAs"
+  method: "GET"
+  url: "{{location_url}}/dmas/:id"
+  example: "San Francisco DMA"
+  status: 200
+  bytes: 193
+- request: "List of Places"
+  folder: "Campaign Management/Location/Places"
+  method: "GET"
+  url: "{{location_url}}/places?searchString=San Francisco"
+  example: "Places in San Francisco"
+  status: 200
+  bytes: 22816
+- request: "Existing Place"
+  folder: "Campaign Management/Location/Places"
+  method: "GET"
+  url: "{{location_url}}/places/:id"
+  example: "University of SF"
+  status: 200
+  bytes: 180
+- request: "New Report"
+  folder: "Reporting"
+  method: "POST"
+  url: "{{reporting_url}}/reports?marketId=1"
+  example: "202 Accepted"
+  status: 202
+  bytes: 0
+- request: "Report Details"
+  folder: "Reporting"
+  method: "GET"
+  url: "{{reporting_url}}/reports/:id"
+  example: "200 Success"
+  status: 200
+  bytes: 2314
+- request: "Report Details"
+  folder: "Reporting"
+  method: "GET"
+  url: "{{reporting_url}}/reports/:id"
+  example: "404 Expired Report"
+  status: 404
+  bytes: 321
+- request: "Report Details"
+  folder: "Reporting"
+  method: "GET"
+  url: "{{reporting_url}}/reports/:id"
+  example: "404 Client Mismatch"
+  status: 404
+  bytes: 94

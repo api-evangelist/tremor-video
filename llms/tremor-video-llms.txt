@@ -1,30 +1,57 @@
 # Tremor Video (Nexxen DSP)
 
-> Tremor Video DSP is the demand-side platform originally built by Tremor Video / Tremor International; after the consolidation of Tremor Video DSP and Amobee it is now marketed as the Nexxen DSP, part of the unified Nexxen advertising stack (DSP, SSP, Ad Server, Data Platform). Its REST API manages programmatic and connected-TV advertising objects — advertisers, insertion orders, line items, packages and creatives — authenticated with OAuth2 client-credentials.
+> Tremor Video DSP is the demand-side platform originally built by Tremor Video / Tremor International; after the consolidation of Tremor Video DSP and Amobee it is now marketed as the Nexxen DSP, part of the unified Nexxen advertising stack (DSP, SSP, Ad Server, Data Platform). Its REST API manages programmatic and connected-TV advertising — advertisers, insertion orders, packages, line items, ads, creatives, audience segments, inventory, geo and device targeting, and asynchronous performance reports — authenticated with OAuth2 client-credentials. Nexxen publishes no OpenAPI; the machine-readable contract is a public Postman collection of 94 requests with 75 saved response examples.
 
 ## APIs
 
-- [Nexxen DSP API (Postman documentation)](https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis): REST API for advertisers, insertion orders, line items, packages and creatives. Base URL https://services.amobee.com/campaign/v3/api.
+- [Nexxen DSP API (Postman documentation)](https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis): all four DSP services behind the gateway at https://services.amobee.com
+- Campaign Management: `https://services.amobee.com/campaign/v5/api` — advertisers, insertion orders, packages, line items, ads, creatives, segments, beacons, inventory, deals, location groups
+- Reporting: `https://services.amobee.com/reporting/v2/api` — asynchronous performance reports
+- Device: `https://services.amobee.com/device/v1/api` — device types, operating systems, manufacturers, devices
+- Location: `https://services.amobee.com/location/v1/api` — continents, countries, regions, cities, DMAs, places, addresses
+- Token Service: `https://services.amobee.com/accounts/v1/api/token`
+
+## Contract
+
+- [Postman collection (verbatim)](collections/tremor-video.postman_collection.json): Nexxen DSP APIs, Postman Collection v2, 94 requests, 32 folders
+- [Response examples index](examples/tremor-video-examples.yml): 75 provider-published examples (200/201/202/204/300/404)
+- No OpenAPI, AsyncAPI, GraphQL, gRPC or MCP server is published by the provider.
 
 ## Authentication
 
-- OAuth2 client-credentials. POST client_id + client_secret to https://services.amobee.com/accounts/v1/api/token, then send the returned access_token as `Authorization: Bearer <token>`.
+- OAuth2 client-credentials. POST client_id + client_secret to https://services.amobee.com/accounts/v1/api/token, then send the returned access_token as `Authorization: Bearer <token>`. The Token Service is the only service that needs no token.
 - [Authentication profile](authentication/tremor-video-authentication.yml)
 
 ## Conventions
 
-- [API conventions](conventions/tremor-video-conventions.yml): URI-path versioning (campaign v3, accounts v1), JSON envelope with `data` / `response_code` / `msg_type` / `msg`, resource-id query filtering; no documented idempotency key.
-- [Data model / ERD](data-model/tremor-video-data-model.yml): advertiser → insertion orders / packages → line items → creatives.
+- [API conventions](conventions/tremor-video-conventions.yml): per-service URI versioning (campaign v5, reporting v2, device v1, location v1); `{queryTotal, data, errors, links}` envelope; `offset`/`limit`/`sortOrder`/`sortKey` pagination; `marketId` scoping with a `300 Multiple Choices` disambiguation response; status changes via `PUT {resource}/{id}/statuses`; no idempotency key.
+- [Data model / ERD](data-model/tremor-video-data-model.yml): account → advertiser → insertion order → (package) → line item → ad → creative, plus reference services for device, location, segments and inventory.
+- [Error catalog](errors/tremor-video-problem-types.yml): custom JSON envelope, not RFC 9457.
+- [Rate limits](rate-limits/tremor-video-rate-limits.yml): 8 requests/second and 86,400/day at the gateway (Reporting docs publish 10K/day, 8/second); `X-RateLimit-*` headers; 429 with an empty body and no `Retry-After`.
+- [Lifecycle](lifecycle/tremor-video-lifecycle.yml): campaign v3 has been removed (404); concepts/conceptSets are deprecated; the status page is behind SAML SSO.
+- [Authorization model](scopes/tremor-video-scopes.yml): no request-time scopes — tokens are Okta-issued JWTs carrying per-service `authorities[]` (APP_API_CAMPAIGN_MGMT, APP_API_REPORTING, APP_API_DEVICE, APP_API_LOCATION) baked into the service account.
+
+## Agent skills
+
+- [Authenticate and read](skills/tremor-video-authenticate-and-read.md)
+- [Build a campaign end to end](skills/tremor-video-build-a-campaign.md)
+- [Run a performance report](skills/tremor-video-run-a-report.md)
 
 ## Docs
 
 - [Get Started collection](https://www.postman.com/nexxen-api/nexxen/collection/9md8q3a/nexxen-dsp-apis)
+- [Nexxen Postman workspace](https://www.postman.com/nexxen-api/nexxen/)
 - [Nexxen DSP & SSP](https://nexxen.com/dsp-ssp/)
 - [DSP login portal](https://login.amobee.com/portal/amobee/dsp/login)
+- [Provider-published llms.txt (verbatim)](llms/tremor-video-nexxen-llms.txt) — marketing pages only, no API content
 
 ## Artifacts
 
-- [MCP candidate tools](mcp/tremor-video-mcp.yml)
+- [MCP candidate tools](mcp/tremor-video-mcp.yml) — derived candidate only; no MCP server is published
 - [Conformance](conformance/tremor-video-conformance.yml)
-- [Lifecycle](lifecycle/tremor-video-lifecycle.yml)
-- [Packages](packages/tremor-video-packages.yml)
+- [Packages](packages/tremor-video-packages.yml) — no first-party SDK exists
+- [Plans / pricing](plans/tremor-video-plans-pricing.yml) — no published plans; enterprise contract only
+- [Well-known probe](well-known/tremor-video-well-known.yml) — the API and marketing hosts serve nothing; OIDC and OAuth authorization-server metadata are served by the provider's own Okta tenant
+- [OpenID Connect discovery (verbatim)](well-known/tremor-video-openid-configuration.json)
+- [OAuth authorization server metadata (verbatim)](well-known/tremor-video-oauth-authorization-server.json)
+- [Domain security](security/tremor-video-domain-security.yml)

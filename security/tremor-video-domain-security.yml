@@ -1,4 +1,4 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: probed
 source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
 hosts:
@@ -18,7 +18,20 @@ hosts:
   https: true
   tls_version: TLSv1.3
   cert_expires: Oct 16 23:59:59 2026 GMT
-  hsts: null
+  hsts: true
+  hsts_max_age: 15724800
+  hsts_include_subdomains: true
+  hsts_note: >-
+    The automated probe records null because the host root returns a bare 404 with no HSTS. On a
+    real API path the gateway does send it — observed 2026-08-13 on
+    GET https://services.amobee.com/campaign/v5/api/advertisers (401):
+    "strict-transport-security: max-age=15724800; includeSubDomains".
+  security_headers_observed:
+  - x-content-type-options: nosniff
+  - x-frame-options: SAMEORIGIN
+  - referrer-policy: strict-origin
+  - content-security-policy: present
+  - permissions-policy: present
 domains:
 - domain: nexxen.com
   dnssec: false
@@ -29,12 +42,12 @@ domains:
 - domain: postman.com
   dnssec: false
   caa:
+  - 0 issue "amazon.com"
+  - 0 issue "digicert.com"
   - 0 issue "letsencrypt.org"
   - 0 issue "pki.goog; cansignhttpexchanges=yes"
   - 0 issuewild "amazon.com"
   - 0 issuewild "digicert.com"
-  - 0 issuewild "letsencrypt.org"
-  - 0 issuewild "pki.goog; cansignhttpexchanges=yes"
   spf: true
   dmarc: true
   dmarc_policy: quarantine

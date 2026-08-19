@@ -1,0 +1,89 @@
+generated: '2026-08-13'
+method: derived
+source: >-
+  Derived from the response examples and per-request documentation in the provider's own public
+  Postman collection (collections/tremor-video.postman_collection.json), plus live unauthenticated
+  responses probed against https://services.amobee.com on 2026-08-13.
+docs: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+format: custom-json-envelope
+rfc9457: false
+envelope:
+  content_type: application/json;charset=UTF-8
+  shape: '{ "queryTotal": n, "data": [...], "errors": [...], "links": {...} }'
+  data_field: data
+  error_field: errors
+  note: >-
+    Errors are always returned on the same envelope as success, with the failure carried in the
+    errors[] array and data[] left empty. There is no application/problem+json media type and no
+    RFC 9457 type/title/detail members.
+  variants:
+  - id: gateway-flat
+    shape: '{"data":[],"errors":[{"message":"...","errorCode":1,"statusCode":"UNAUTHORIZED"}]}'
+    emitted_by: Amobee Cloud Gateway (x-amobee-cloud-gateway header present)
+    observed: live 401 on https://services.amobee.com/campaign/v5/api/advertisers
+  - id: service-nested
+    shape: '{"data":[],"errors":[{"messages":[{"type":"other","code":"1","message":"..."}]}]}'
+    emitted_by: the DSP services themselves (Reporting example)
+    observed: 404 response example in the published collection
+  - id: spring-boot
+    shape: '{"timestamp":"...","path":"/...","status":404,"error":"Not Found","requestId":"..."}'
+    emitted_by: the platform default handler on unrouted paths
+    observed: live 404 on https://services.amobee.com/openapi.json
+problems:
+- status: 401
+  code: 1
+  statusCode: UNAUTHORIZED
+  title: Missing, expired or invalid access token
+  detail: >-
+    The "Authorization" header of the HTTP request is missing, or specifies an expired or invalid
+    access token.
+  remediation: >-
+    POST client_id + client_secret with grant_type=client_credentials to
+    https://services.amobee.com/accounts/v1/api/token and resend with Authorization: Bearer <token>.
+  evidence: live probe 2026-08-13 (services.amobee.com/campaign/v5/api/advertisers)
+- status: 429
+  title: Rate limit exceeded
+  detail: Empty body; returned once the gateway's 8 requests/second bucket is drained.
+  remediation: >-
+    Back off and retry; the per-second bucket replenishes at 8/s. No Retry-After header is sent —
+    read X-RateLimit-Remaining instead. See rate-limits/tremor-video-rate-limits.yml.
+  evidence: live probe 2026-08-13 (services.amobee.com/device/v1/api/deviceTypes)
+- status: 300
+  title: Multiple Choices — market not specified
+  detail: >-
+    A list request from a client with access to more than one market that omits marketId returns
+    300 with links.markets enumerating the market IDs and their pre-built URLs.
+  remediation: Re-send the request with an explicit marketId query parameter.
+  example: '{"data":[],"errors":[],"links":{"markets":{"1":"https://services.amobee.com/campaign/v5/api/accountManagers?marketId=1"}}}'
+  applies_to: >-
+    accountManagers, advertisers, insertionOrders, packages, lineItems, segments, segmentSets,
+    concepts, conceptSets, beacons, inventoryLists, locationGroups, publisherDeals, creatives
+  evidence: response example + per-request documentation in the published collection
+- status: 404
+  code: '1'
+  type: other
+  title: Requested report is no longer available
+  detail: Requested report is no longer available, 24 hour availability window has passed.
+  remediation: Re-create the report with POST /reporting/v2/api/reports and re-poll the new report id.
+  source_operation: Reporting / Report Details
+  evidence: 404 response example in the published collection
+- status: 404
+  title: Not found
+  detail: '{"errors":[{"message":"error_message_not_found"}]}'
+  remediation: Verify the resource id and the market the credential is scoped to.
+  source_operation: Reporting / Report Details
+  evidence: 404 response example in the published collection
+- status: 405
+  title: Method Not Allowed
+  detail: Returned by the token service when the token endpoint is called with anything but POST.
+  source_operation: Token Service / New Bearer Token
+  evidence: live probe 2026-08-13 (GET services.amobee.com/accounts/v1/api/token)
+documented_constraints:
+- rule: >-
+    On list operations, marketId / advertiserId / insertionOrderId / packageId are mutually
+    exclusive — no combination may be sent on a single request.
+  outcome: request rejected
+  evidence: per-request documentation, Insertion Orders / Packages / Line Items folders
+observed_status_codes:
+  from_collection_examples: [200, 201, 202, 204, 300, 404]
+  from_live_probes: [401, 405, 429]

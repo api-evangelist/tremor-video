@@ -1,59 +1,169 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: derived
 source: >-
-  Derived from the Nexxen DSP (Amobee Campaign v3) API resource surface and the resource-id filter
-  parameters documented in the public Postman workspace and evidenced by the community Python
-  client (github.com/martingstall/amobee-api-client).
-base_url: https://services.amobee.com/campaign/v3/api
+  Derived from the 94 requests, their nested create paths, their scope query parameters and their
+  saved response examples in Nexxen's own public Postman collection, saved verbatim at
+  collections/tremor-video.postman_collection.json.
+docs: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+services:
+  campaign:
+    base_url: https://services.amobee.com/campaign/v5/api
+    entities: [accountManager, account, advertiser, insertionOrder, package, lineItem, segment,
+      segmentSet, retargetingSegment, concept, conceptSet, beacon, inventorySource, inventoryList,
+      locationGroup, publisherDeal, creativeAsset, creative, ad, adSize]
+  device:
+    base_url: https://services.amobee.com/device/v1/api
+    entities: [deviceType, operatingSystem, manufacturer, device]
+  location:
+    base_url: https://services.amobee.com/location/v1/api
+    entities: [address, continent, country, region, city, dma, place]
+  reporting:
+    base_url: https://services.amobee.com/reporting/v2/api
+    entities: [report]
+tenancy:
+  root: market
+  field: marketId
+  note: >-
+    Every Campaign Management resource is scoped to a market. A credential with access to more than
+    one market must name it; omitting marketId returns 300 Multiple Choices with the market list.
 entities:
+- name: market
+  path: null
+  note: Not directly addressable; surfaced only through the 300 links.markets map and the marketId filter.
+- name: accountManager
+  path: accountManagers
+  operations: [list, get]
+- name: account
+  path: accounts
+  note: Parent of advertiser; addressable only as a path segment on advertiser creation.
 - name: advertiser
   path: advertisers
+  operations: [create, list, get, update, status]
+  observed_fields: [id, marketId, resourceType, status, accountId, createdAt, updatedAt, name,
+    primaryUrl, currency, viewabilityProviders, nielsenCampaignOptIn, identityPlatformVendor]
 - name: insertionOrder
   path: insertionOrders
+  operations: [create, copy, list, get, update, status]
 - name: package
   path: packages
+  operations: [create, copy, list, get, update, status]
+  note: Present only in 3-level campaigns.
 - name: lineItem
   path: lineItems
+  operations: [create, copy, list, get, update, status]
+- name: ad
+  path: ads
+  operations: [create, list, get, update, status]
 - name: creative
   path: creatives
+  operations: [create, list, get, update, status]
+- name: creativeAsset
+  path: creativeAssets
+  operations: [upload]
+  subtypes: [display, video, audio]
+- name: adSize
+  path: adSizes
+  operations: [list, get]
+- name: segment
+  path: segments
+  operations: [list]
+- name: segmentSet
+  path: segmentSets
+  operations: [list]
+- name: retargetingSegment
+  path: retargetingSegments
+  operations: [create, list, get, update]
+- name: concept
+  path: concepts
+  operations: [list]
+  deprecated: true
+- name: conceptSet
+  path: conceptSets
+  operations: [list]
+  deprecated: true
+- name: beacon
+  path: beacons
+  operations: [create, list, get, update, status]
+- name: inventorySource
+  path: inventorySources
+  operations: [list]
+- name: inventoryList
+  path: inventoryLists
+  operations: [create, list, get, update, archive]
+- name: locationGroup
+  path: locationGroups
+  operations: [create, list, get, update]
+- name: publisherDeal
+  path: publisherDeals
+  operations: [create, list, get, update, archive]
+- name: deviceType
+  path: deviceTypes
+  operations: [list, get]
+- name: operatingSystem
+  path: operatingSystems
+  operations: [list, get]
+- name: manufacturer
+  path: manufacturers
+  operations: [list, get]
+- name: device
+  path: devices
+  operations: [list, get]
+- name: address
+  path: addresses
+  operations: [list, get]
+- name: continent
+  path: continents
+  operations: [list, get]
+- name: country
+  path: countries
+  operations: [list, get]
+- name: region
+  path: regions
+  operations: [list, get]
+- name: city
+  path: cities
+  operations: [list, get]
+- name: dma
+  path: dmas
+  operations: [list, get]
+- name: place
+  path: places
+  operations: [list, get]
+- name: report
+  path: reports
+  operations: [create, get]
+  note: Asynchronous; 202 Accepted, id returned on the Location header, 24-hour retention.
 relationships:
-- from: insertionOrder
-  to: advertiser
-  kind: belongs_to
-  via: advertiserId
-- from: package
-  to: advertiser
-  kind: belongs_to
-  via: advertiserId
-- from: creative
-  to: advertiser
-  kind: belongs_to
-  via: advertiserId
-- from: lineItem
-  to: insertionOrder
-  kind: belongs_to
-  via: insertionOrderId
-- from: lineItem
-  to: package
-  kind: belongs_to
-  via: packageId
-- from: creative
-  to: lineItem
-  kind: belongs_to
-  via: lineItemId
-- from: advertiser
-  to: insertionOrder
-  kind: has_many
-  via: advertiserId
-- from: advertiser
-  to: package
-  kind: has_many
-  via: advertiserId
-- from: insertionOrder
-  to: lineItem
-  kind: has_many
-  via: insertionOrderId
-- from: lineItem
-  to: creative
-  kind: has_many
-  via: lineItemId
+- {from: advertiser, to: account, kind: belongs_to, via: accountId, evidence: 'POST /accounts/{accountId}/advertisers'}
+- {from: insertionOrder, to: advertiser, kind: belongs_to, via: advertiserId, evidence: 'POST /advertisers/{advertiserId}/insertionOrders'}
+- {from: package, to: insertionOrder, kind: belongs_to, via: insertionOrderId, evidence: 'POST /insertionOrders/{insertionOrderId}/packages'}
+- {from: lineItem, to: insertionOrder, kind: belongs_to, via: insertionOrderId, evidence: 'POST /insertionOrders/{insertionOrderId}/lineItems (2-level campaign)'}
+- {from: lineItem, to: package, kind: belongs_to, via: packageId, evidence: 'POST /packages/{packageId}/lineItems (3-level campaign)'}
+- {from: ad, to: lineItem, kind: belongs_to, via: lineItemId, evidence: 'POST /lineItems/{lineItemId}/ads'}
+- {from: ad, to: creative, kind: has_many, via: 'creatives[].creativeId', evidence: 'New Ad request body carries creatives[] with creativeId + weight'}
+- {from: creative, to: advertiser, kind: belongs_to, via: advertiserId, evidence: 'POST /advertisers/{advertiserId}/creatives'}
+- {from: creative, to: creativeAsset, kind: has_one, via: asset upload, evidence: 'creativeAssets/{display|video|audio} is uploaded before New Creative'}
+- {from: retargetingSegment, to: advertiser, kind: belongs_to, via: advertiserId, evidence: 'POST /advertisers/{advertiserId}/retargetingSegments'}
+- {from: beacon, to: advertiser, kind: belongs_to, via: advertiserId, evidence: 'POST /advertisers/{advertiserId}/beacons'}
+- {from: segmentSet, to: advertiser, kind: belongs_to, via: advertiserId, evidence: 'GET /segmentSets?advertiserId='}
+- {from: conceptSet, to: advertiser, kind: belongs_to, via: advertiserId, evidence: 'GET /conceptSets?advertiserId='}
+- {from: advertiser, to: insertionOrder, kind: has_many, via: advertiserId}
+- {from: insertionOrder, to: package, kind: has_many, via: insertionOrderId}
+- {from: insertionOrder, to: lineItem, kind: has_many, via: insertionOrderId}
+- {from: package, to: lineItem, kind: has_many, via: packageId}
+- {from: lineItem, to: ad, kind: has_many, via: lineItemId}
+- {from: advertiser, to: creative, kind: has_many, via: advertiserId}
+- {from: manufacturer, to: deviceType, kind: belongs_to, via: deviceTypeId, evidence: 'GET /manufacturers?deviceTypeId='}
+- {from: manufacturer, to: operatingSystem, kind: belongs_to, via: operatingSystemId, evidence: 'GET /manufacturers?operatingSystemId='}
+- {from: device, to: manufacturer, kind: belongs_to, via: manufacturerId, evidence: 'GET /devices?manufacturerId='}
+- {from: device, to: deviceType, kind: belongs_to, via: deviceTypeId}
+- {from: device, to: operatingSystem, kind: belongs_to, via: operatingSystemId}
+- {from: region, to: country, kind: belongs_to, via: countryId, evidence: 'GET /regions?countryId='}
+- {from: city, to: region, kind: belongs_to, via: regionId, evidence: 'GET /cities?regionId='}
+- {from: dma, to: region, kind: belongs_to, via: regionId, evidence: 'GET /dmas?regionId='}
+id_conventions:
+  format: numeric string
+  example: '1602845563'
+  resource_type_field: resourceType
+  timestamps: [createdAt, updatedAt]
+  timestamp_format: ISO-8601 UTC

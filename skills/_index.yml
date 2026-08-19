@@ -1,0 +1,31 @@
+generated: '2026-08-13'
+method: generated
+source: collections/tremor-video.postman_collection.json
+note: >-
+  Nexxen publishes no OpenAPI, so these skills are grounded in the provider's own public Postman
+  collection (Nexxen DSP APIs, saved verbatim at collections/tremor-video.postman_collection.json).
+  Every request name, path, body field and status code cited in a skill appears verbatim in that
+  collection or was observed on a live probe of services.amobee.com — none were invented.
+skills:
+- file: tremor-video-authenticate-and-read.md
+  name: Authenticate against the Nexxen DSP API and read a resource list
+  api: collections/tremor-video.postman_collection.json
+  operations: [New Bearer Token, List of Advertisers, List of Account Managers, Existing Advertiser]
+- file: tremor-video-build-a-campaign.md
+  name: Build a Nexxen DSP campaign end to end
+  api: collections/tremor-video.postman_collection.json
+  operations:
+  - New Advertiser
+  - New IO
+  - New Package
+  - New LI (2 Level Campaign)
+  - New LI (3 Level Campaign)
+  - Upload Display Asset
+  - New Creative
+  - New Ad
+  - Update LI Status
+  - Update IO Status
+- file: tremor-video-run-a-report.md
+  name: Run a Nexxen DSP performance report
+  api: collections/tremor-video.postman_collection.json
+  operations: [New Report, Report Details]

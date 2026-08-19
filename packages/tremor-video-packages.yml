@@ -1,9 +1,12 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: searched
 source: >-
-  Registry and GitHub search for Nexxen / Amobee / Tremor Video DSP client libraries. No official
-  first-party SDK was found on npm, PyPI, Maven Central, NuGet, pkg.go.dev, RubyGems, Packagist or
-  crates.io; the only client library located is a community wrapper.
+  Registry lookups against npm, PyPI, RubyGems and crates.io (2026-08-13) for amobee / nexxen /
+  amobee-api-client / nexxen-dsp, plus the provider's own public Postman workspace. Nexxen ships no
+  first-party client library in any package registry; the DSP API is distributed as a Postman
+  collection to fork.
+package_count: 1
+official_package_count: 0
 packages:
 - language: python
   registry: github
@@ -11,9 +14,33 @@ packages:
   url: https://github.com/martingstall/amobee-api-client
   install: pip install git+https://github.com/martingstall/amobee-api-client
   official: false
+  version: null
+  published: null
+  last_commit: '2019-04-18'
+  archived: false
   note: >-
-    Community Python wrapper for the Amobee/Nexxen DSP Campaign v3 API (advertisers, insertion
-    orders, line items, packages, creatives). Not published to PyPI and not maintained by Nexxen.
+    Community Python wrapper for the Amobee/Nexxen DSP Campaign API. Not published to PyPI, so
+    there is no registry metadata endpoint and no version or release date to read — version and
+    published are null by fact, not by omission. GitHub reports the last push as 2019-04-18, which
+    predates the current campaign v5 base path this API now serves (v3 is retired and 404s), so it
+    is almost certainly broken against the live API.
+registries_checked:
+- {registry: npm, query: 'nexxen, amobee, amobee-api-client, nexxen-dsp', result: no first-party package}
+- {registry: pypi, query: 'nexxen, amobee, amobee-api-client, nexxen-dsp', result: 404 on all}
+- {registry: rubygems, query: 'nexxen, amobee, amobee-api-client, nexxen-dsp', result: 404 on all}
+- {registry: crates.io, query: 'nexxen, amobee, amobee-api-client, nexxen-dsp', result: 404 on all}
+- {registry: maven-central, query: nexxen / amobee, result: no first-party artifact located}
+- {registry: nuget, query: nexxen / amobee, result: no first-party artifact located}
+- {registry: pkg.go.dev, query: nexxen / amobee, result: no first-party module located}
+- {registry: packagist, query: nexxen / amobee, result: no first-party package located}
+distribution:
+  primary: postman-collection
+  url: https://www.postman.com/nexxen-api/nexxen/
+  artifact: collections/tremor-video.postman_collection.json
+  note: >-
+    The provider's stated distribution model is "fork the Nexxen DSP APIs collection and the
+    External API Client environment" in Postman. That is a real machine-readable contract, but it
+    is not an SDK — there is no generated or hand-written client in any language.
 notes: >-
-  Nexxen documents the DSP API through a public Postman workspace rather than shipping an official
-  client SDK. Only wire a type: SDKs pointer if a first-party library is published later.
+  No SDKs pointer is wired in apis.yml because Nexxen publishes no first-party client library. Wire
+  type: SDKs only if one is published later.

@@ -1,21 +1,74 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: searched
-source: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+source: >-
+  Nexxen's own public Postman collection (collections/tremor-video.postman_collection.json) plus
+  live probes of services.amobee.com and status.nexxen.com on 2026-08-13.
+docs: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
 versioning:
   scheme: uri-path
-  current: v3
+  per_service: true
   services:
-    campaign: v3
     accounts: v1
+    campaign: v5
+    reporting: v2
+    device: v1
+    location: v1
+  current: campaign v5
+  evidence: >-
+    The collection's own variables set campaign_ver=5, reporting_ver=2, device_ver=1,
+    location_ver=1. Probed 2026-08-13: /campaign/v3/api/advertisers returns 404 (retired) and
+    /campaign/v5/api/advertisers returns 401 (live), so old major versions are removed rather than
+    kept in parallel.
   docs: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
 deprecation:
   policy_url: null
-  sunset_header: null
-  note: No public deprecation policy or RFC 8594 Sunset/Deprecation header support was located.
+  sunset_header: false
+  note: >-
+    No public deprecation policy, no RFC 8594 Sunset/Deprecation header, and no migration guide was
+    located. Deprecation is communicated only as prose inside the Postman collection, and retired
+    versions disappear (campaign v3 now 404s) rather than being announced.
+  deprecated_resources:
+  - resource: concepts
+    path: /campaign/v5/api/concepts
+    statement: >-
+      "Concepts have been deprecated from the Nexxen DSP. While they still exist in our APIs, they
+      should not be used."
+    source: Campaign Management / Concepts, Concept Sets folder description
+  - resource: conceptSets
+    path: /campaign/v5/api/conceptSets
+    statement: same deprecation notice as concepts
+  retired_versions:
+  - version: campaign v3
+    observed_status: 404
+    checked: '2026-08-13'
+    note: The base URL previously recorded for this provider; now removed from the gateway.
 sla:
   url: null
-status_page: null
+  uptime_target: null
+status_page:
+  url: https://status.nexxen.com/
+  backend: https://nexxenplatformstatus.statuspage.io
+  public: false
+  observed_status: 302
+  gate: SAML SSO (login.microsoftonline.com) — Atlassian Statuspage configured as a private page
+  api: https://nexxenplatformstatus.statuspage.io/api/v2/summary.json returns 401 "Your page is a private page"
+  checked: '2026-08-13'
+  note: >-
+    Nexxen operates a real Statuspage for platform status, but it is a private page: the host 302s
+    to a Microsoft Entra SAML login and the machine-readable summary endpoint returns 401. Because
+    no unauthenticated developer or agent can read platform status, no StatusPage pointer is wired
+    in apis.yml — recording the presence without noting the gate would credit transparency the
+    provider does not actually offer to API consumers.
+changelog:
+  url: null
+  note: >-
+    No dated API changelog or release-notes page was located on nexxen.com, in the Postman
+    workspace, or on any developer subdomain. The Postman workspace itself was last updated
+    2023-07-06 per Postman's own metadata.
+support:
+  url: https://nexxen.com/contact-us/
+  note: General contact form; no developer-specific support channel, forum or ticket portal found.
 notes: >-
-  The Nexxen DSP API is versioned in the URI path (campaign v3, accounts v1). No dedicated public
-  status page, SLA document, or deprecation policy was found for the DSP API surface as of this
-  pass.
+  The Nexxen DSP API surface is provisioned per customer inside an existing platform contract, and
+  its lifecycle signalling is correspondingly thin: versions are in the URI path, old majors are
+  removed silently, deprecation lives in collection prose, and status is behind SSO.

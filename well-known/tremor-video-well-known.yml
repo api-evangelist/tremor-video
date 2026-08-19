@@ -1,24 +1,75 @@
-generated: '2026-07-21'
-method: searched
-source: live probes of the Nexxen / Amobee DSP hosts
+generated: '2026-08-13'
+method: probed
+source: live probes of the Nexxen / Amobee DSP, marketing and identity hosts on 2026-08-13
 hosts:
 - host: https://services.amobee.com
+  role: API gateway (all DSP services)
   documents:
-  - path: /.well-known/security.txt
-    status: 404
-  - path: /.well-known/openid-configuration
-    status: 404
-  - path: /.well-known/oauth-authorization-server
-    status: 404
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+- host: https://amobee-platform.okta.com
+  role: identity provider — the Okta org that actually issues Nexxen DSP API access tokens
+  ownership_evidence: >-
+    The provider's own published example access token (saved in its public Postman collection)
+    carries iss = https://amobee-platform.okta.com/oauth2/default, and the Content-Security-Policy
+    returned by services.amobee.com explicitly allowlists amobee-platform.okta.com and
+    amobee-platform.oktapreview.com. This is Amobee/Nexxen's own tenant, not a third party's.
+  documents:
+  - path: /oauth2/default/.well-known/openid-configuration
+    status: 200
+    content_type: application/json
+    file: tremor-video-openid-configuration.json
+  - path: /oauth2/default/.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    file: tremor-video-oauth-authorization-server.json
+  - {path: /.well-known/openid-configuration, status: 200, note: org-level issuer; the DSP API uses the /oauth2/default authorization server, saved above}
 - host: https://nexxen.com
+  role: marketing site / docs entry point
   documents:
-  - path: /.well-known/security.txt
-    status: 404
-  - path: /.well-known/openid-configuration
-    status: 404
-  - path: /api-catalog
-    status: 404
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /security.txt, status: 404}
+  - {path: /.well-known/api-catalog, status: 404, note: soft 404 — WordPress theme HTML with a 404 status}
+  - {path: /.well-known/ai-plugin.json, status: 404, note: soft 404 — WordPress theme HTML with a 404 status}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 200, file: ../llms/tremor-video-nexxen-llms.txt}
+- host: https://www.nexxen.com
+  role: marketing site (www)
+  documents:
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+findings:
+  oidc_discovery:
+    issuer: https://amobee-platform.okta.com/oauth2/default
+    token_endpoint: https://amobee-platform.okta.com/oauth2/default/v1/token
+    jwks_uri: https://amobee-platform.okta.com/oauth2/default/v1/keys
+    introspection_endpoint: https://amobee-platform.okta.com/oauth2/default/v1/introspect
+    revocation_endpoint: https://amobee-platform.okta.com/oauth2/default/v1/revoke
+    note: >-
+      Nexxen's DSP API is fronted by its own token endpoint at
+      services.amobee.com/accounts/v1/api/token, which wraps this Okta authorization server. The
+      Okta metadata does not advertise client_credentials in grant_types_supported, so the wrapper
+      — not the raw Okta endpoint — is the supported integration path for API clients.
+    ref: scopes/tremor-video-scopes.yml
+  llms_txt:
+    url: https://nexxen.com/llms.txt
+    status: 200
+    content_type: text/plain
+    generator: Yoast SEO v28.2
+    file: llms/tremor-video-nexxen-llms.txt
+    note: >-
+      Real document, but an SEO-plugin-generated site map of marketing pages, posts, case studies
+      and events — no API, authentication or endpoint content.
+  api_host_serves_nothing: true
 notes: >-
-  No /.well-known discovery documents were served by the API host (services.amobee.com) or the
-  marketing host (nexxen.com). This is an honest negative record; no WellKnown scoring pointer is
-  wired because no catalog document was found.
+  The API gateway (services.amobee.com) and the marketing site serve nothing under /.well-known —
+  no security.txt, no api-catalog, no agent card. The only real discovery documents in this
+  provider's estate are the OIDC / OAuth authorization-server metadata on its own Okta identity
+  host, which are saved here verbatim and are what earns the WellKnown pointer. No SecurityTxt
+  pointer is wired, because no security.txt is served on any host.

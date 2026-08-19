@@ -1,0 +1,24 @@
+generated: '2026-08-13'
+method: searched
+source: https://nexxen.com/
+plan_count: 0
+plans: []
+note: >-
+  Nexxen publishes no pricing page and no plans for the Nexxen DSP (formerly Amobee / Tremor Video
+  DSP) or for its API. The company sells through sales and managed-service engagements: the site
+  has no /pricing page (404), the sitemap contains no pricing or plans page, and access to the DSP
+  API is granted by provisioning an API service account (client_id / client_secret) inside an
+  existing Nexxen DSP platform contract. Media spend is transacted as programmatic ad buying, not
+  as a published API tier with a quota and an overage rate. This is an honest zero, not a gap in
+  the search.
+access_model: enterprise-contact-sales
+evidence:
+- url: https://nexxen.com/pricing/
+  status: 404
+- url: https://nexxen.com/page-sitemap.xml
+  status: 200
+  note: full page inventory contains no pricing/plans page
+- url: https://nexxen.com/contact-us/
+  status: 200
+  note: the only commercial entry point published
+checked: '2026-08-13'

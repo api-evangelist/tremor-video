@@ -1,37 +1,115 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: searched
-source: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+source: >-
+  Nexxen's own public Postman collection (saved verbatim at
+  collections/tremor-video.postman_collection.json), plus live unauthenticated probes of
+  https://services.amobee.com on 2026-08-13.
+docs: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
 authentication:
   style: oauth2-client-credentials-bearer
   token_url: https://services.amobee.com/accounts/v1/api/token
+  token_request: JSON body {client_id, client_secret, grant_type=client_credentials}
   header: 'Authorization: Bearer <access_token>'
+  note: >-
+    The Token Service is the only Nexxen DSP service that does not require an access token. One
+    token authorizes every other service (Campaign Management, Reporting, Device, Location).
   ref: authentication/tremor-video-authentication.yml
 versioning:
   scheme: uri-path
-  api_versions:
-    campaign: v3
+  per_service: true
+  services:
     accounts: v1
-  example: https://services.amobee.com/campaign/v3/api
-content_type: application/json
-base_urls:
-  api: https://services.amobee.com/campaign/v3/api
-  token: https://services.amobee.com/accounts/v1/api/token
-response_envelope:
-  fields: [data, response_code, msg_type, msg, request_body]
-  data_field: data
-  success_indicator: 'response_code == 200 and msg_type == "success"'
-pagination:
-  style: query-filter
+    campaign: v5
+    reporting: v2
+    device: v1
+    location: v1
   note: >-
-    List endpoints are filtered with resource-id query parameters (e.g. advertiserId,
-    insertionOrderId, packageId, lineItemId) rather than a documented cursor/offset paging scheme.
+    Each service carries its own version segment. The collection's own variables pin campaign to
+    v5; campaign/v3 is dead (404 on 2026-08-13) while campaign/v5 answers 401, so the version
+    segment is load-bearing and not interchangeable.
+  ref: lifecycle/tremor-video-lifecycle.yml
+content_type: application/json;charset=UTF-8
+base_urls:
+  gateway: https://services.amobee.com
+  token: https://services.amobee.com/accounts/v1/api/token
+  campaign: https://services.amobee.com/campaign/v5/api
+  reporting: https://services.amobee.com/reporting/v2/api
+  device: https://services.amobee.com/device/v1/api
+  location: https://services.amobee.com/location/v1/api
+response_envelope:
+  fields: [queryTotal, data, errors, links]
+  data_field: data
+  total_field: queryTotal
+  error_field: errors
+  links_field: links
+  success_indicator: 2xx status with a populated data[] and an empty errors[]
+  note: >-
+    Success and failure share one envelope. Reads return queryTotal + data[]; failures return an
+    empty data[] with the detail in errors[]. Edits commonly return 204 No Content with no body.
+pagination:
+  style: offset-limit
+  params: [offset, limit, sortOrder, sortKey]
+  sort_order_values: [asc, desc]
+  response_fields: [queryTotal]
+  cursor: false
+  link_header: false
+  note: >-
+    Page with offset += limit until offset >= queryTotal. sortKey names a field of the resource
+    (name, id, cost, beaconPlacement, targetGeoType are all used in the published examples).
+scoping:
+  required_param: marketId
+  mutually_exclusive: [marketId, advertiserId, insertionOrderId, packageId]
+  disambiguation_response: 300 Multiple Choices with links.markets enumerating market id -> URL
+  note: >-
+    A client with access to more than one market that omits marketId gets a 300 carrying a
+    ready-made URL per market. No combination of the scope filters may be sent on one request.
 idempotency:
   supported: false
-  note: No idempotency-key header or parameter is documented for the Nexxen DSP API.
+  note: >-
+    No idempotency key header or parameter is documented anywhere in the published collection. A
+    retried POST creates a duplicate object; re-read with the matching list request before retrying
+    a create.
+copy_semantics:
+  param: copy=self
+  applies_to: [insertionOrders, packages, lineItems]
+  note: POST {resource}/{id}?copy=self clones an existing object rather than rebuilding it.
+status_transitions:
+  style: dedicated sub-resource
+  path: '{resource}/{id}/statuses'
+  method: PUT
+  body_field_by_object:
+    advertiser: status
+    insertionOrder: status
+    package: status
+    lineItem: status
+    creative: status
+    ad: clientStatus
+    beacon: workflowStatus
+  observed_values: [play, pause, stop, archived]
+  note: Creation does not start delivery; activation is a separate PUT to /statuses.
+async_operations:
+  reporting:
+    submit: POST /reporting/v2/api/reports
+    accepted_status: 202
+    id_location: Location response header
+    poll: GET /reporting/v2/api/reports/{id}
+    retention: 24 hours
+request_tracing:
+  header: x-amobee-cloud-gateway-transaction-id
+  note: The gateway returns a transaction id on every response; quote it in support requests.
+rate_limit_signaling:
+  headers: [X-RateLimit-Remaining, X-RateLimit-Burst-Capacity, X-RateLimit-Replenish-Rate]
+  exhaustion_status: 429
+  retry_after: false
+  ref: rate-limits/tremor-video-rate-limits.yml
 error_handling:
-  envelope: response_code + msg_type + msg on the standard JSON envelope
+  envelope: errors[] on the standard JSON envelope
   rfc9457: false
+  ref: errors/tremor-video-problem-types.yml
 cross_links:
   authentication: authentication/tremor-video-authentication.yml
   data_model: data-model/tremor-video-data-model.yml
   lifecycle: lifecycle/tremor-video-lifecycle.yml
+  errors: errors/tremor-video-problem-types.yml
+  rate_limits: rate-limits/tremor-video-rate-limits.yml
+  collection: collections/tremor-video.postman_collection.json

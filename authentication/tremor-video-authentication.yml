@@ -1,11 +1,12 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: searched
-source: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+source: collections/tremor-video.postman_collection.json
 docs: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
 summary:
   types: [oauth2]
   oauth2_flows: [clientCredentials]
   token_type: Bearer
+  scopes_published: false
 schemes:
 - name: OAuth2ClientCredentials
   type: oauth2
@@ -14,15 +15,61 @@ schemes:
   tokenUrl: https://services.amobee.com/accounts/v1/api/token
   credentials: [client_id, client_secret]
   request_body: JSON body {client_id, client_secret, grant_type=client_credentials}
+  request_auth: none — the Token Service is the only DSP service that takes no access token
   token_type: Bearer
   applied_as: 'Authorization: Bearer <access_token>'
+  applies_to:
+  - https://services.amobee.com/campaign/v5/api
+  - https://services.amobee.com/reporting/v2/api
+  - https://services.amobee.com/device/v1/api
+  - https://services.amobee.com/location/v1/api
+  scopes: []
   sources:
+  - collections/tremor-video.postman_collection.json
   - https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+credential_provisioning:
+  method: platform-provisioned
+  note: >-
+    client_id is the ID of an API service account and client_secret its password; both are created
+    inside the Nexxen / Amobee DSP platform by an existing customer. There is no self-serve
+    developer signup and no public key-issuance flow.
+  portal: https://login.amobee.com/portal/amobee/dsp/login
+failure_mode:
+  status: 401
+  body: >-
+    {"data":[],"errors":[{"message":"The \"Authorization\" header of the HTTP request is missing, or
+    specifies an expired or invalid access token.","errorCode":1,"statusCode":"UNAUTHORIZED"}]}
+  observed: live probe of https://services.amobee.com/campaign/v5/api/advertisers on 2026-08-13
+token_renewal:
+  method: re-POST the same request to the token endpoint
+  note: >-
+    An expired token is replaced by re-sending the identical token request; the credentials do not
+    rotate. No refresh_token is issued (client-credentials).
+identity_provider:
+  vendor: Okta
+  issuer: https://amobee-platform.okta.com/oauth2/default
+  discovery:
+  - well-known/tremor-video-openid-configuration.json
+  - well-known/tremor-video-oauth-authorization-server.json
+  token_format: JWT (RS256)
+  jwks_uri: https://amobee-platform.okta.com/oauth2/default/v1/keys
+  entitlement_claim: authorities
+  evidence: >-
+    The iss claim of the example access token Nexxen published in its own Postman collection, plus
+    the Content-Security-Policy on services.amobee.com, which allowlists amobee-platform.okta.com.
+  note: >-
+    Tokens are JWTs issued by Amobee/Nexxen's own Okta tenant and carry per-service entitlements in
+    an authorities[] claim rather than OAuth scopes. The Okta authorization server does not itself
+    advertise the client_credentials grant — services.amobee.com/accounts/v1/api/token is the
+    supported wrapper and the only documented integration path.
+  ref: scopes/tremor-video-scopes.yml
+gateway:
+  name: Amobee Cloud Gateway
+  evidence: 'x-amobee-cloud-gateway: true and x-amobee-cloud-gateway-transaction-id on every response'
+  note: Authentication is enforced at the gateway, uniformly across all four DSP services.
 notes: >-
-  The Nexxen DSP (formerly Amobee / Tremor Video DSP) API uses OAuth2 client-credentials. A client
-  POSTs its client_id and client_secret to the token endpoint and receives an access_token, which
-  is then sent as an Authorization: Bearer header on subsequent API calls against
-  https://services.amobee.com/campaign/v3/api. API credentials are generated inside the Nexxen /
-  Amobee DSP platform; the token and call flow are documented in the public Nexxen DSP Postman
-  workspace and corroborated by third-party connectors (Supermetrics) and a community Python
-  client.
+  The Nexxen DSP (formerly Amobee / Tremor Video DSP) API uses OAuth2 client-credentials with
+  Bearer tokens. There is no OpenID Connect discovery document, no OAuth authorization-server
+  metadata at /.well-known/oauth-authorization-server (404), and no published scope vocabulary — so
+  no scopes/ artifact is emitted. Authorization is per service account and per market rather than
+  per scope.

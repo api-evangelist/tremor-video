@@ -1,57 +1,402 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: derived
 status: candidate
 source: >-
-  Derived candidate tool list from the Nexxen DSP (Amobee Campaign v3) REST resource surface. No
-  official first-party MCP server was found for Nexxen / Amobee / Tremor Video DSP.
+  Candidate tool list derived from the 94 requests in Nexxen's own public Postman collection
+  (collections/tremor-video.postman_collection.json). No first-party or third-party MCP server
+  for Nexxen / Amobee / Tremor Video DSP was found on the provider's site, in the Postman
+  workspace, on npm, or in the public MCP registries. These tools are a proposal, not a shipped
+  agent surface.
 server:
   name: nexxen-dsp
   transport: http
-  base_url: https://services.amobee.com/campaign/v3/api
-  auth: 'oauth2-client-credentials (Authorization: Bearer)'
+  base_url: https://services.amobee.com
+  auth: 'oauth2 client-credentials bearer token from /accounts/v1/api/token'
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: oauth
+  verified: derived
+  checked: '2026-08-13'
+  note: >-
+    Nobody ships an MCP server for this API — neither Nexxen nor a third party. mode: none.
+tool_count: 94
 tools:
-- name: list_advertisers
-  description: List advertisers
-  source_operation: 'GET /campaign/v3/api/advertisers'
-- name: get_advertiser
-  description: Get an advertiser by id
-  source_operation: 'GET /campaign/v3/api/advertisers/{id}'
-- name: create_advertiser
-  description: Create an advertiser
-  source_operation: 'POST /campaign/v3/api/advertisers/'
-- name: list_insertion_orders
-  description: List insertion orders (filterable by advertiserId)
-  source_operation: 'GET /campaign/v3/api/insertionOrders'
-- name: get_insertion_order
-  description: Get an insertion order by id
-  source_operation: 'GET /campaign/v3/api/insertionOrders/{id}'
-- name: create_insertion_order
-  description: Create an insertion order
-  source_operation: 'POST /campaign/v3/api/insertionOrders/'
-- name: list_line_items
-  description: List line items (filterable by insertionOrderId or packageId)
-  source_operation: 'GET /campaign/v3/api/lineItems'
-- name: get_line_item
-  description: Get a line item by id
-  source_operation: 'GET /campaign/v3/api/lineItems/{id}'
-- name: create_line_item
-  description: Create a line item
-  source_operation: 'POST /campaign/v3/api/lineItems/'
-- name: list_packages
-  description: List packages (filterable by advertiser)
-  source_operation: 'GET /campaign/v3/api/packages'
-- name: get_package
-  description: Get a package by id
-  source_operation: 'GET /campaign/v3/api/packages/{id}'
-- name: create_package
-  description: Create a package
-  source_operation: 'POST /campaign/v3/api/packages/'
-- name: list_creatives
-  description: List creatives (filterable by advertiserId or lineItemId)
-  source_operation: 'GET /campaign/v3/api/creatives'
-- name: get_creative
-  description: Get a creative by id
-  source_operation: 'GET /campaign/v3/api/creatives/{id}'
-- name: create_creative
-  description: Create a creative
-  source_operation: 'POST /campaign/v3/api/creatives/'
+- name: new_bearer_token
+  description: "New Bearer Token (Token Service)"
+  source_operation: "POST /accounts/v1/api/token"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_account_managers
+  description: "List of Account Managers (Campaign Management/Account Managers)"
+  source_operation: "GET /campaign/v5/api/accountManagers"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_account_manager
+  description: "Existing Account Manager (Campaign Management/Account Managers)"
+  source_operation: "GET /campaign/v5/api/accountManagers/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: new_advertiser
+  description: "New Advertiser (Campaign Management/Advertisers)"
+  source_operation: "POST /campaign/v5/api/accounts/:accountId/advertisers"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_advertisers
+  description: "List of Advertisers (Campaign Management/Advertisers)"
+  source_operation: "GET /campaign/v5/api/advertisers"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_advertiser
+  description: "Existing Advertiser (Campaign Management/Advertisers)"
+  source_operation: "GET /campaign/v5/api/advertisers/:advertiserId"
+  source: collections/tremor-video.postman_collection.json
+- name: edit_advertiser
+  description: "Edit Advertiser (Campaign Management/Advertisers)"
+  source_operation: "PUT /campaign/v5/api/advertisers/:advertiserId"
+  source: collections/tremor-video.postman_collection.json
+- name: update_advertiser_status
+  description: "Update Advertiser Status (Campaign Management/Advertisers)"
+  source_operation: "PUT /campaign/v5/api/advertisers/:advertiserId/statuses"
+  source: collections/tremor-video.postman_collection.json
+- name: new_io
+  description: "New IO (Campaign Management/Insertion Orders (IOs))"
+  source_operation: "POST /campaign/v5/api/advertisers/:advertiserId/insertionOrders"
+  source: collections/tremor-video.postman_collection.json
+- name: copy_existing_io
+  description: "Copy Existing IO (Campaign Management/Insertion Orders (IOs))"
+  source_operation: "POST /campaign/v5/api/insertionOrders/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_ios
+  description: "List of IOs (Campaign Management/Insertion Orders (IOs))"
+  source_operation: "GET /campaign/v5/api/insertionOrders"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_io
+  description: "Existing IO (Campaign Management/Insertion Orders (IOs))"
+  source_operation: "GET /campaign/v5/api/insertionOrders/:insertionOrderId"
+  source: collections/tremor-video.postman_collection.json
+- name: edit_io
+  description: "Edit IO (Campaign Management/Insertion Orders (IOs))"
+  source_operation: "PUT /campaign/v5/api/insertionOrders/:insertionOrderId"
+  source: collections/tremor-video.postman_collection.json
+- name: update_io_status
+  description: "Update IO Status (Campaign Management/Insertion Orders (IOs))"
+  source_operation: "PUT /campaign/v5/api/insertionOrders/:id/statuses"
+  source: collections/tremor-video.postman_collection.json
+- name: new_package
+  description: "New Package (Campaign Management/Packages)"
+  source_operation: "POST /campaign/v5/api/insertionOrders/:insertionOrderId/packages"
+  source: collections/tremor-video.postman_collection.json
+- name: copy_existing_package
+  description: "Copy Existing Package (Campaign Management/Packages)"
+  source_operation: "POST /campaign/v5/api/packages/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_packages
+  description: "List of Packages (Campaign Management/Packages)"
+  source_operation: "GET /campaign/v5/api/packages"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_package
+  description: "Existing Package (Campaign Management/Packages)"
+  source_operation: "GET /campaign/v5/api/packages/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: edit_package
+  description: "Edit Package (Campaign Management/Packages)"
+  source_operation: "PUT /campaign/v5/api/packages/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: update_package_status
+  description: "Update Package Status (Campaign Management/Packages)"
+  source_operation: "PUT /campaign/v5/api/packages/:id/statuses"
+  source: collections/tremor-video.postman_collection.json
+- name: new_li_2_level_campaign
+  description: "New LI (2 Level Campaign) (Campaign Management/Line Items (LIs))"
+  source_operation: "POST /campaign/v5/api/insertionOrders/:insertionOrderId/lineItems"
+  source: collections/tremor-video.postman_collection.json
+- name: new_li_3_level_campaign
+  description: "New LI (3 Level Campaign) (Campaign Management/Line Items (LIs))"
+  source_operation: "POST /campaign/v5/api/packages/:packageId/lineItems"
+  source: collections/tremor-video.postman_collection.json
+- name: copy_existing_li
+  description: "Copy Existing LI (Campaign Management/Line Items (LIs))"
+  source_operation: "POST /campaign/v5/api/lineItems/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_lis
+  description: "List of LIs (Campaign Management/Line Items (LIs))"
+  source_operation: "GET /campaign/v5/api/lineItems"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_li
+  description: "Existing LI (Campaign Management/Line Items (LIs))"
+  source_operation: "GET /campaign/v5/api/lineItems/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: edit_li
+  description: "Edit LI (Campaign Management/Line Items (LIs))"
+  source_operation: "PUT /campaign/v5/api/lineItems/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: update_li_status
+  description: "Update LI Status (Campaign Management/Line Items (LIs))"
+  source_operation: "PUT /campaign/v5/api/lineItems/:id/statuses"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_segments
+  description: "List of Segments (Campaign Management/Segments/Segment Sets)"
+  source_operation: "GET /campaign/v5/api/segments"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_segment_sets
+  description: "List of Segment Sets (Campaign Management/Segments/Segment Sets)"
+  source_operation: "GET /campaign/v5/api/segmentSets"
+  source: collections/tremor-video.postman_collection.json
+- name: new_retargeting_segment
+  description: "New Retargeting Segment (Campaign Management/Retargeting Segments)"
+  source_operation: "POST /campaign/v5/api/advertisers/:advertiserId/retargetingSegments"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_retargeting_segments
+  description: "List of Retargeting Segments (Campaign Management/Retargeting Segments)"
+  source_operation: "GET /campaign/v5/api/retargetingSegments"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_retargeting_segment
+  description: "Existing Retargeting Segment (Campaign Management/Retargeting Segments)"
+  source_operation: "GET /campaign/v5/api/retargetingSegments/:segmentRetargetingId"
+  source: collections/tremor-video.postman_collection.json
+- name: edit_retargeting_segment
+  description: "Edit Retargeting Segment (Campaign Management/Retargeting Segments)"
+  source_operation: "PUT /campaign/v5/api/retargetingSegments/:retargetingSegmentId"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_concepts
+  description: "List of Concepts (Campaign Management/Concepts/Concept Sets)"
+  source_operation: "GET /campaign/v5/api/concepts"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_concept_sets
+  description: "List of Concept Sets (Campaign Management/Concepts/Concept Sets)"
+  source_operation: "GET /campaign/v5/api/conceptSets"
+  source: collections/tremor-video.postman_collection.json
+- name: new_beacon
+  description: "New Beacon (Campaign Management/Beacons)"
+  source_operation: "POST /campaign/v5/api/advertisers/:advertiserId/beacons"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_beacons
+  description: "List of Beacons (Campaign Management/Beacons)"
+  source_operation: "GET /campaign/v5/api/beacons"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_beacon
+  description: "Existing Beacon (Campaign Management/Beacons)"
+  source_operation: "GET /campaign/v5/api/beacons/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: edit_beacon
+  description: "Edit Beacon (Campaign Management/Beacons)"
+  source_operation: "PUT /campaign/v5/api/beacons/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: update_beacon_status
+  description: "Update Beacon Status (Campaign Management/Beacons)"
+  source_operation: "PUT /campaign/v5/api/beacons/:id/statuses"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_inventory_sources
+  description: "List of Inventory Sources (Campaign Management/Inventory Sources)"
+  source_operation: "GET /campaign/v5/api/inventorySources"
+  source: collections/tremor-video.postman_collection.json
+- name: new_inventory_list
+  description: "New Inventory List (Campaign Management/Inventory Lists)"
+  source_operation: "POST /campaign/v5/api/inventoryLists"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_inventory_lists
+  description: "List of Inventory Lists (Campaign Management/Inventory Lists)"
+  source_operation: "GET /campaign/v5/api/inventoryLists"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_inventory_list
+  description: "Existing Inventory List (Campaign Management/Inventory Lists)"
+  source_operation: "GET /campaign/v5/api/inventoryLists/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: edit_inventory_list
+  description: "Edit Inventory List (Campaign Management/Inventory Lists)"
+  source_operation: "PUT /campaign/v5/api/inventoryLists/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: archive_inventory_list
+  description: "Archive Inventory List (Campaign Management/Inventory Lists)"
+  source_operation: "PUT /campaign/v5/api/inventoryLists/:id/statuses"
+  source: collections/tremor-video.postman_collection.json
+- name: new_location_group
+  description: "New Location Group (Campaign Management/Location Groups)"
+  source_operation: "POST /campaign/v5/api/locationGroups"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_location_groups
+  description: "List of Location Groups (Campaign Management/Location Groups)"
+  source_operation: "GET /campaign/v5/api/locationGroups"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_location_group
+  description: "Existing Location Group (Campaign Management/Location Groups)"
+  source_operation: "GET /campaign/v5/api/locationGroups/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: edit_location_group
+  description: "Edit Location Group (Campaign Management/Location Groups)"
+  source_operation: "PUT /campaign/v5/api/locationGroups/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: new_publisher_deal
+  description: "New Publisher Deal (Campaign Management/Publisher Deals)"
+  source_operation: "POST /campaign/v5/api/publisherDeals"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_deals
+  description: "List of Deals (Campaign Management/Publisher Deals)"
+  source_operation: "GET /campaign/v5/api/publisherDeals"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_deal
+  description: "Existing Deal (Campaign Management/Publisher Deals)"
+  source_operation: "GET /campaign/v5/api/publisherDeals/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: x_edit_deal
+  description: "(X) Edit Deal (Campaign Management/Publisher Deals)"
+  source_operation: "PUT /campaign/v5/api/publisherDeals/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: archive_deal
+  description: "Archive Deal (Campaign Management/Publisher Deals)"
+  source_operation: "PUT /campaign/v5/api/publisherDeals/:id/statuses"
+  source: collections/tremor-video.postman_collection.json
+- name: upload_display_asset
+  description: "Upload Display Asset (Campaign Management/Creatives)"
+  source_operation: "POST /campaign/v5/api/creativeAssets/display"
+  source: collections/tremor-video.postman_collection.json
+- name: upload_video_asset
+  description: "Upload Video Asset (Campaign Management/Creatives)"
+  source_operation: "POST /campaign/v5/api/creativeAssets/video"
+  source: collections/tremor-video.postman_collection.json
+- name: upload_audio_asset
+  description: "Upload Audio Asset (Campaign Management/Creatives)"
+  source_operation: "POST /campaign/v5/api/creativeAssets/audio"
+  source: collections/tremor-video.postman_collection.json
+- name: new_creative
+  description: "New Creative (Campaign Management/Creatives)"
+  source_operation: "POST /campaign/v5/api/advertisers/:advertiserId/creatives"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_creatives
+  description: "List of Creatives (Campaign Management/Creatives)"
+  source_operation: "GET /campaign/v5/api/creatives"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_creative
+  description: "Existing Creative (Campaign Management/Creatives)"
+  source_operation: "GET /campaign/v5/api/creatives/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: edit_creative
+  description: "Edit Creative (Campaign Management/Creatives)"
+  source_operation: "PUT /campaign/v5/api/creatives/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: update_creative_status
+  description: "Update Creative Status (Campaign Management/Creatives)"
+  source_operation: "PUT /campaign/v5/api/creatives/:id/statuses"
+  source: collections/tremor-video.postman_collection.json
+- name: new_ad
+  description: "New Ad (Campaign Management/Ads)"
+  source_operation: "POST /campaign/v5/api/lineItems/:lineItemId/ads"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_ads
+  description: "List of Ads (Campaign Management/Ads)"
+  source_operation: "GET /campaign/v5/api/ads"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_ad
+  description: "Existing Ad (Campaign Management/Ads)"
+  source_operation: "GET /campaign/v5/api/ads/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: edit_ad
+  description: "Edit Ad (Campaign Management/Ads)"
+  source_operation: "PUT /campaign/v5/api/ads/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: update_ad_statuses
+  description: "Update Ad Statuses (Campaign Management/Ads)"
+  source_operation: "PUT /campaign/v5/api/ads/:adId/statuses"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_ad_sizes
+  description: "List of Ad Sizes (Campaign Management/Ad Sizes)"
+  source_operation: "GET /campaign/v5/api/adSizes"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_ad_size
+  description: "Existing Ad Size (Campaign Management/Ad Sizes)"
+  source_operation: "GET /campaign/v5/api/adSizes/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_device_types
+  description: "List of Device Types (Campaign Management/Device/Device Types)"
+  source_operation: "GET /device/v1/api/deviceTypes"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_device_type
+  description: "Existing Device Type (Campaign Management/Device/Device Types)"
+  source_operation: "GET /device/v1/api/deviceTypes/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_os_s
+  description: "List of OS's (Campaign Management/Device/Operating Systems)"
+  source_operation: "GET /device/v1/api/operatingSystems"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_os
+  description: "Existing OS (Campaign Management/Device/Operating Systems)"
+  source_operation: "GET /device/v1/api/operatingSystems/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_manufacturers
+  description: "List of Manufacturers (Campaign Management/Device/Manufacturers)"
+  source_operation: "GET /device/v1/api/manufacturers"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_manufacturer
+  description: "Existing Manufacturer (Campaign Management/Device/Manufacturers)"
+  source_operation: "GET /device/v1/api/manufacturers/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_devices
+  description: "List of Devices (Campaign Management/Device/Devices)"
+  source_operation: "GET /device/v1/api/devices"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_device
+  description: "Existing Device (Campaign Management/Device/Devices)"
+  source_operation: "GET /device/v1/api/devices/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_addresses
+  description: "List of Addresses (Campaign Management/Location/Addresses)"
+  source_operation: "GET /location/v1/api/addresses"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_address
+  description: "Existing Address (Campaign Management/Location/Addresses)"
+  source_operation: "GET /location/v1/api/addresses/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_continents
+  description: "List of Continents (Campaign Management/Location/Continents)"
+  source_operation: "GET /location/v1/api/continents"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_continent
+  description: "Existing Continent (Campaign Management/Location/Continents)"
+  source_operation: "GET /location/v1/api/continents/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_countries
+  description: "List of Countries (Campaign Management/Location/Countries)"
+  source_operation: "GET /location/v1/api/countries"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_country
+  description: "Existing Country (Campaign Management/Location/Countries)"
+  source_operation: "GET /location/v1/api/countries/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_regions
+  description: "List of Regions (Campaign Management/Location/Regions)"
+  source_operation: "GET /location/v1/api/regions"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_region
+  description: "Existing Region (Campaign Management/Location/Regions)"
+  source_operation: "GET /location/v1/api/regions/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_cities
+  description: "List of Cities (Campaign Management/Location/Cities)"
+  source_operation: "GET /location/v1/api/cities"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_city
+  description: "Existing City (Campaign Management/Location/Cities)"
+  source_operation: "GET /location/v1/api/cities/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_dmas
+  description: "List of DMAs (Campaign Management/Location/DMAs)"
+  source_operation: "GET /location/v1/api/dmas"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_dma
+  description: "Existing DMA (Campaign Management/Location/DMAs)"
+  source_operation: "GET /location/v1/api/dmas/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: list_of_places
+  description: "List of Places (Campaign Management/Location/Places)"
+  source_operation: "GET /location/v1/api/places"
+  source: collections/tremor-video.postman_collection.json
+- name: existing_place
+  description: "Existing Place (Campaign Management/Location/Places)"
+  source_operation: "GET /location/v1/api/places/:id"
+  source: collections/tremor-video.postman_collection.json
+- name: new_report
+  description: "New Report (Reporting)"
+  source_operation: "POST /reporting/v2/api/reports"
+  source: collections/tremor-video.postman_collection.json
+- name: report_details
+  description: "Report Details (Reporting)"
+  source_operation: "GET /reporting/v2/api/reports/:id"
+  source: collections/tremor-video.postman_collection.json

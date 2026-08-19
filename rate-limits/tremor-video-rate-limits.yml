@@ -1,0 +1,69 @@
+generated: '2026-08-13'
+method: probed
+source: >-
+  Observed live on unauthenticated responses from https://services.amobee.com (the Amobee Cloud
+  Gateway that fronts every Nexxen DSP API service), corroborated by the published rate limit in
+  the Reporting service documentation inside the provider's own public Postman collection.
+docs: https://www.postman.com/nexxen-api/nexxen/documentation/9md8q3a/nexxen-dsp-apis
+limit_count: 3
+headers:
+  returned:
+  - X-RateLimit-Remaining
+  - X-RateLimit-Burst-Capacity
+  - X-RateLimit-Replenish-Rate
+  note: >-
+    The gateway emits the X-RateLimit-* trio TWICE on every response — once for the per-day bucket
+    (burst-capacity 86400, replenish-rate 1/s) and once for the per-second bucket (burst-capacity 8,
+    replenish-rate 8/s). Header order is day-bucket first, second-bucket second. No Retry-After and
+    no RFC 9331 RateLimit-* headers are returned.
+  retry_after: false
+  standard_ratelimit_headers: false
+exhaustion:
+  status: 429
+  body: empty
+  observed: '2026-08-13'
+  note: >-
+    Repeated unauthenticated GETs against services.amobee.com returned HTTP 429 with an empty body
+    once the 8/second bucket was drained; the counter refilled within seconds.
+limits:
+- id: gateway-per-second
+  scope: per-client (gateway, all DSP API services)
+  window: 1s
+  limit: 8
+  burst: 8
+  evidence: 'x-ratelimit-burst-capacity: 8 / x-ratelimit-replenish-rate: 8 on live responses'
+  method: probed
+- id: gateway-per-day
+  scope: per-client (gateway, all DSP API services)
+  window: 86400s
+  limit: 86400
+  burst: 86400
+  evidence: 'x-ratelimit-burst-capacity: 86400 / x-ratelimit-replenish-rate: 1 on live responses'
+  method: probed
+- id: reporting-service
+  scope: per-account (Reporting Service)
+  window: 1d
+  limit: 10000
+  burst: 8
+  burst_window: 1s
+  evidence: >-
+    "Rate limit: 10K calls per day, 8 per second" — Reporting / New Report documentation in the
+    Nexxen DSP APIs public Postman collection.
+  method: searched
+related_constraints:
+- service: Reporting
+  constraint: Maximum data lookback of 19 months
+- service: Reporting
+  constraint: Maximum file size of 300MB for outputPath to S3
+- service: Reporting
+  constraint: Report output is retained for a 24 hour availability window
+evidence:
+- url: https://services.amobee.com/campaign/v5/api/advertisers
+  status: 401
+  note: returned the X-RateLimit-* header pair set
+- url: https://services.amobee.com/device/v1/api/deviceTypes
+  status: 429
+  note: rate-limit exhaustion observed on the 8/second bucket
+- url: collections/tremor-video.postman_collection.json
+  status: 200
+  note: published Reporting rate limit, verbatim provider collection

@@ -1,22 +1,103 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: derived
 source: >-
-  Derived from the documented Nexxen DSP (Amobee Campaign v3) auth flow and response envelope; no
-  independent compliance/certification program was located for the API surface.
+  Derived from Nexxen's own public Postman collection
+  (collections/tremor-video.postman_collection.json), live unauthenticated responses from
+  services.amobee.com on 2026-08-13, and the published legal/privacy pages on nexxen.com.
 standards:
 - id: oauth2
   conforms: true
-  evidence: OAuth2 client-credentials grant with a token endpoint and Bearer access tokens
+  evidence: OAuth 2.0 client-credentials grant with a token endpoint and Bearer access tokens
 - id: oauth2-client-credentials
   conforms: true
-  evidence: grant_type=client_credentials against services.amobee.com/accounts/v1/api/token
+  evidence: >-
+    grant_type=client_credentials POSTed as a JSON body to
+    https://services.amobee.com/accounts/v1/api/token
+- id: rfc6750-bearer-token
+  conforms: true
+  evidence: 'Authorization: Bearer <access_token> on every non-token request'
 - id: rest-json
   conforms: true
-  evidence: JSON request/response over HTTPS with resource-oriented paths under /campaign/v3/api
+  evidence: >-
+    Resource-oriented paths, JSON request/response over HTTPS, nested creates under the parent
+    resource, and PUT sub-resources for state transitions
+- id: openapi
+  conforms: false
+  evidence: >-
+    No OpenAPI or Swagger document is published; probes of /openapi.json, /openapi.yaml,
+    /swagger.json, /v1/openapi.json, /api-docs and /redoc on services.amobee.com and nexxen.com all
+    returned 404 on 2026-08-13. The machine-readable contract is a Postman Collection v2 instead.
+- id: postman-collection-v2
+  conforms: true
+  evidence: >-
+    Nexxen publishes a public Postman Collection v2 (schema
+    https://schema.getpostman.com/json/collection/v2.0.0/collection.json) with 94 requests and 75
+    saved response examples — saved verbatim at collections/tremor-video.postman_collection.json
 - id: rfc9457-problem-details
   conforms: false
-  evidence: errors returned on a custom {response_code, msg_type, msg} envelope, not application/problem+json
-- id: openidconnect
+  evidence: >-
+    Errors are returned on the shared {queryTotal, data, errors, links} JSON envelope, not as
+    application/problem+json with type/title/detail members
+- id: rfc6585-429
+  conforms: true
+  evidence: HTTP 429 observed on rate-limit exhaustion (live probe 2026-08-13)
+- id: rfc9331-ratelimit-headers
   conforms: false
+  evidence: >-
+    The gateway returns the legacy X-RateLimit-Remaining / X-RateLimit-Burst-Capacity /
+    X-RateLimit-Replenish-Rate trio, not the standard RateLimit / RateLimit-Policy fields, and
+    sends no Retry-After
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: No Sunset or Deprecation header; campaign v3 was simply removed (404)
+- id: idempotency-key
+  conforms: false
+  evidence: No idempotency key header or parameter is documented anywhere in the collection
+- id: cursor-pagination
+  conforms: false
+  evidence: 'offset/limit/sortOrder/sortKey with a queryTotal count; no cursor and no Link header'
+- id: openidconnect
+  conforms: partial
+  evidence: >-
+    The DSP API itself is client-credentials only and issues no id_token, but its tokens are minted
+    by an Okta authorization server that serves a full OIDC discovery document at
+    https://amobee-platform.okta.com/oauth2/default/.well-known/openid-configuration (saved at
+    well-known/tremor-video-openid-configuration.json). The API host serves no discovery document.
+- id: rfc8414-oauth-authorization-server-metadata
+  conforms: true
+  evidence: >-
+    200 at
+    https://amobee-platform.okta.com/oauth2/default/.well-known/oauth-authorization-server on the
+    provider's own identity tenant; nothing is served at the same path on services.amobee.com.
+- id: rfc7519-jwt-access-tokens
+  conforms: true
+  evidence: RS256 JWT access tokens with iss/aud/exp/scp/authorities claims, jwks_uri published
 - id: fapi
   conforms: false
+- id: json-api
+  conforms: false
+- id: mcp
+  conforms: false
+  evidence: No MCP server is published; mcp/tremor-video-mcp.yml is a derived candidate only
+- id: a2a-agent-card
+  conforms: false
+  evidence: >-
+    /.well-known/agent-card.json and /.well-known/agent.json returned 404 on services.amobee.com,
+    nexxen.com and www.nexxen.com (2026-08-13)
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: /.well-known/security.txt returned 404 on both the API and marketing hosts
+compliance_program:
+  published_certifications: []
+  note: >-
+    No SOC 2, ISO 27001, PCI DSS, HIPAA or FedRAMP certification is published, and no trust center
+    exists at trust.nexxen.com (does not resolve). The Services Privacy Policy and the Data
+    Processing Addendum address GDPR and CCPA obligations contractually, but that is regulatory
+    posture rather than an audited compliance program, so no Compliance pointer is wired.
+  regulatory_statements:
+  - regime: GDPR
+    url: https://nexxen.com/services-privacy-policy/
+  - regime: CCPA
+    url: https://nexxen.com/services-privacy-policy/
+  - regime: DPA / sub-processors
+    url: https://nexxen.com/dpa/
