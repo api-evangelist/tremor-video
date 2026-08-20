@@ -48,6 +48,15 @@ x-enrichment:
   pass: local-v1
 tags:
 - Company
+- MarTech
+- Advertising
+- AdTech
+- DSP
+- Programmatic
+- CTV
+- Video Advertising
+tags_raw:
+- Company
 - Martech
 - Advertising
 - AdTech
