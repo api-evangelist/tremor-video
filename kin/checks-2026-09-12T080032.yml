@@ -1,15 +1,15 @@
 ---
 kin_checks:
   slug: tremor-video
-  schema_version: 0.18.2
-  scored_at: '2026-09-04'
-  run_ts: 2026-09-04T062714
+  schema_version: 0.21.0
+  scored_at: '2026-09-12'
+  run_ts: 2026-09-12T080032
   note: Actionable checks only (missed + partial). earned/na are every other check
-    in rubric/scoring-0.18.2.yml; counts below let you verify that.
+    in rubric/scoring-0.21.0.yml; counts below let you verify that.
   counts:
-    total: 132
+    total: 136
     earned: 26
-    partial: 9
+    partial: 13
     missed: 53
     na: 44
   checks:
@@ -63,15 +63,6 @@ kin_checks:
     status: missed
   - id: portal_present
     status: missed
-  - id: documentation_present
-    status: missed
-    detail: pointer liveness 0.0
-  - id: api_reference_present
-    status: missed
-    detail: pointer liveness 0.0
-  - id: getting_started_present
-    status: missed
-    detail: pointer liveness 0.0
   - id: sdk_count_1
     status: missed
   - id: sdk_count_3
@@ -80,9 +71,6 @@ kin_checks:
     status: missed
   - id: console_or_sandbox
     status: missed
-  - id: postman_present
-    status: missed
-    detail: pointer liveness 0.0
   - id: plans_present
     status: missed
   - id: plans_multiple
@@ -98,6 +86,14 @@ kin_checks:
   - id: reg_vulnerability_disclosure
     status: missed
   - id: reg_compliance_published
+    status: missed
+  - id: upsert_outcome_discriminator
+    status: missed
+  - id: upsert_alternate_key
+    status: missed
+  - id: upsert_named
+    status: missed
+  - id: upsert_declared_conflict
     status: missed
   - id: spec_presence
     status: missed
@@ -129,6 +125,22 @@ kin_checks:
   - id: conformance_declared
     status: partial
     earned: 1.5
+  - id: documentation_present
+    status: partial
+    earned: 2.0
+    detail: pointer liveness 0.5
+  - id: api_reference_present
+    status: partial
+    earned: 1.5
+    detail: pointer liveness 0.5
+  - id: getting_started_present
+    status: partial
+    earned: 2.5
+    detail: pointer liveness 0.5
+  - id: postman_present
+    status: partial
+    earned: 1.0
+    detail: pointer liveness 0.5
   - id: agent_skill_present
     status: partial
     earned: 0.75
